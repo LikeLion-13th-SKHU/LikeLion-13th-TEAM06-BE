@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "members", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class User {
+public class Member {
 
     public enum Provider {
         GOOGLE, NAVER, KAKAO, LOCAL

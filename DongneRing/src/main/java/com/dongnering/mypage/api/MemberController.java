@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-public class MypageController {
+public class MemberController {
 
     private final GoogleOAuthService googleOAuthService;
 

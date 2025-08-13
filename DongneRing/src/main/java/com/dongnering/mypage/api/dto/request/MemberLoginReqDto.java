@@ -1,7 +1,7 @@
 package com.dongnering.mypage.api.dto.request;
 
 
-public record MypageResponse(
+public record MemberLoginReqDto(
 
 
 ) {}

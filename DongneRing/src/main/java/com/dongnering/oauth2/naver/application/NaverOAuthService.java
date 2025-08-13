@@ -3,9 +3,9 @@ package com.dongnering.oauth2.naver.application;
 import com.dongnering.oauth2.naver.api.dto.NaverTokenResponse;
 import com.dongnering.oauth2.naver.api.dto.NaverUserInfo;
 import com.google.gson.Gson;
-import com.dongnering.mypage.domain.User;
+import com.dongnering.mypage.domain.Member;
 import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.repository.UserRepository;
+import com.dongnering.mypage.domain.repository.MemberRepository;
 import com.dongnering.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class NaverOAuthService {
     @Value("${naver.user-info-uri}")
     private String NAVER_USERINFO_URL;
 
-    private final UserRepository memberRepository;
+    private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     // 1) 인가코드로 access token 요청
@@ -98,13 +98,13 @@ public class NaverOAuthService {
             throw new RuntimeException("이메일 정보가 없는 유저입니다.");
         }
 
-        User member = memberRepository.findByEmail(userInfo.getResponse().getEmail())
-                .orElseGet(() -> memberRepository.save(User.builder()
+        Member member = memberRepository.findByEmail(userInfo.getResponse().getEmail())
+                .orElseGet(() -> memberRepository.save(Member.builder()
                         .email(userInfo.getResponse().getEmail())
-                        .name(userInfo.getResponse().getName())
+                        .nickname(userInfo.getResponse().getName())
                         .pictureUrl(userInfo.getResponse().getProfileImage())
                         .role(Role.ROLE_USER)
-                        .provider(User.Provider.NAVER)
+                        .provider(Member.Provider.NAVER)
                         .build()));
 
         return jwtTokenProvider.generateToken(member);

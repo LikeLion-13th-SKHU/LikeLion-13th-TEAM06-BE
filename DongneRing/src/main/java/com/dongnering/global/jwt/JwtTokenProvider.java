@@ -1,7 +1,7 @@
 package com.dongnering.global.jwt;
 
-import com.dongnering.mypage.domain.User;
-import com.dongnering.mypage.domain.repository.UserRepository;
+import com.dongnering.mypage.domain.Member;
+import com.dongnering.mypage.domain.repository.MemberRepository;
 import com.dongnering.common.error.ErrorCode;
 import com.dongnering.common.exception.BusinessException;
 import io.jsonwebtoken.*;
@@ -29,7 +29,7 @@ public class JwtTokenProvider {
 
     private static final String AUTHORITIES_KEY = "auth";
 
-    private final UserRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     @Value("${token.expire.time}")
     private String tokenExpireTime;
@@ -39,7 +39,7 @@ public class JwtTokenProvider {
 
     private SecretKey key;
 
-    public JwtTokenProvider(UserRepository memberRepository) {
+    public JwtTokenProvider(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
@@ -50,7 +50,7 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String generateToken(User member) {
+    public String generateToken(Member member) {
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + Long.parseLong(tokenExpireTime));
 

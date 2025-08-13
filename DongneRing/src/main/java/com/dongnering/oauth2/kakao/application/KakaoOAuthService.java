@@ -1,9 +1,9 @@
 package com.dongnering.oauth2.kakao.application;
 
 import com.dongnering.global.jwt.JwtTokenProvider;
-import com.dongnering.mypage.domain.User;
+import com.dongnering.mypage.domain.Member;
 import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.repository.UserRepository;
+import com.dongnering.mypage.domain.repository.MemberRepository;
 import com.dongnering.oauth2.kakao.api.dto.KakaoTokenResponse;
 import com.dongnering.oauth2.kakao.api.dto.KakaoUserInfo;
 import com.google.gson.Gson;
@@ -36,7 +36,7 @@ public class KakaoOAuthService {
     @Value("${kakao.user-info-uri}")
     private String KAKAO_USERINFO_URL;
 
-    private final UserRepository memberRepository;
+    private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     // 1) 인가코드로 access token 요청
@@ -109,13 +109,13 @@ public class KakaoOAuthService {
                 ? userInfo.getKakaoAccount().getProfile().getProfileImageUrl()
                 : null;
 
-        User member = memberRepository.findByEmail(email)
-                .orElseGet(() -> memberRepository.save(User.builder()
+        Member member = memberRepository.findByEmail(email)
+                .orElseGet(() -> memberRepository.save(Member.builder()
                         .email(email)
-                        .name(name)
+                        .nickname(name)
                         .pictureUrl(picture)
                         .role(Role.ROLE_USER)
-                        .provider(User.Provider.KAKAO) // ⚠️ enum에 KAKAO 추가 필요
+                        .provider(Member.Provider.KAKAO) // ⚠️ enum에 KAKAO 추가 필요
                         .build()));
 
         return jwtTokenProvider.generateToken(member);
