@@ -1,9 +1,9 @@
 package com.dongnering.oauth2.google.application;
 
 import com.google.gson.Gson;
-import com.dongnering.member.domain.Role;
-import com.dongnering.member.domain.Member;
-import com.dongnering.member.domain.repository.MemberRepository;
+import com.dongnering.mypage.domain.Role;
+import com.dongnering.mypage.domain.User;
+import com.dongnering.mypage.domain.repository.UserRepository;
 import com.dongnering.oauth2.google.api.dto.GoogleTokenResponse;
 import com.dongnering.oauth2.google.api.dto.GoogleUserInfo;
 import com.dongnering.global.jwt.JwtTokenProvider;
@@ -37,7 +37,7 @@ public class GoogleOAuthService {
     @Value("${google.user-info-uri}")
     private String GOOGLE_USERINFO_URL;
 
-    private final MemberRepository memberRepository;
+    private final UserRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
 //    private final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
@@ -104,13 +104,13 @@ public class GoogleOAuthService {
             throw new RuntimeException("이메일 인증이 되지 않은 유저입니다.");
         }
 
-        Member member = memberRepository.findByEmail(userInfo.getEmail())
-                .orElseGet(() -> memberRepository.save(Member.builder()
+        User member = memberRepository.findByEmail(userInfo.getEmail())
+                .orElseGet(() -> memberRepository.save(User.builder()
                         .email(userInfo.getEmail())
                         .name(userInfo.getName())
                         .pictureUrl(userInfo.getPictureUrl())
                         .role(Role.ROLE_USER)
-                        .provider(Member.Provider.GOOGLE)  // 구글 소셜 로그인 표시
+                        .provider(User.Provider.GOOGLE)  // 구글 소셜 로그인 표시
                         .build()));
 
         return jwtTokenProvider.generateToken(member);

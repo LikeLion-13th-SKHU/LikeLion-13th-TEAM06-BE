@@ -1,9 +1,8 @@
-package com.dongnering.member.domain;
+package com.dongnering.mypage.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -13,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @Table(name = "members", uniqueConstraints = @UniqueConstraint(columnNames = "email"))
-public class Member {
+public class User {
 
     public enum Provider {
         GOOGLE, NAVER, KAKAO, LOCAL
@@ -26,10 +25,8 @@ public class Member {
     @Column(nullable = false, unique = true)
     private String email;
 
-    private String password;
-
     @Column(nullable = false)
-    private String name;
+    private String nickname;
 
     private String pictureUrl;
 
@@ -44,6 +41,4 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 }

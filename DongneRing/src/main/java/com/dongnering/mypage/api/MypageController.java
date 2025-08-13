@@ -1,4 +1,4 @@
-package com.dongnering.member.api;
+package com.dongnering.mypage.api;
 
 import com.dongnering.oauth2.google.application.GoogleOAuthService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/members")
 @RequiredArgsConstructor
-public class MemberController {
+public class MypageController {
 
     private final GoogleOAuthService googleOAuthService;
 
