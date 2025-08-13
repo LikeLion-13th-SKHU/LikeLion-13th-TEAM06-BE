@@ -20,7 +20,8 @@ public enum SuccessCode {
 
     // 201 CREATED
     REFRESH_TOKEN_SUCCESS(HttpStatus.CREATED, "리프레시 토큰으로 액세스 토큰 재발급에 성공하였습니다."),
-    MEMBER_LOGIN_SUCCESS(HttpStatus.CREATED, "로그인에 성공하였습니다."),
+    MEMBER_JOIN_SUCCESS(HttpStatus.CREATED, "회원가입에 성공하였습니다."),  // 새로 추가
+    MEMBER_LOGIN_SUCCESS(HttpStatus.CREATED, "로그인에 성공하였습니다."),    // 기존에 있음
     LIKE_SAVE_SUCCESS(HttpStatus.CREATED, "좋아요가 성공적으로 등록되었습니다."),
     COMMENT_SAVE_SUCCESS(HttpStatus.CREATED, "댓글이 성공적으로 등록되었습니다."),
     BOOKMARK_SAVE_SUCCESS(HttpStatus.CREATED,"북마크가 성공적으로 등록되었습니다.");
