@@ -21,15 +21,16 @@ public enum ErrorCode {
     JWT_SIGNATURE_INVALID(HttpStatus.UNAUTHORIZED, "JWT 서명 검증에 실패했습니다.", "UNAUTHORIZED_401"),
     JWT_VALIDATION_FAILED(HttpStatus.UNAUTHORIZED, "JWT 검증에 실패했습니다.", "UNAUTHORIZED_401"),
     NO_AUTHORIZATION_EXCEPTION(HttpStatus.UNAUTHORIZED, "인증에 실패하였습니다.", "UNAUTHORIZED_401"),
+    INVALID_PASSWORD(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.", "UNAUTHORIZED_401"),
 
     // 403 FORBIDDEN
     FORBIDDEN_EXCEPTION(HttpStatus.FORBIDDEN, "접근 권한이 없습니다.", "FORBIDDEN_403"),
 
     // 404 NOT FOUND
-    MEMBER_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 사용자가 없습니다. memberId = ", "NOT_FOUND_404"),
-    LIKE_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 좋아요가 없습니다. likeId = ", "NOT_FOUND_404"),
-    COMMENT_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다. commentId = ", "NOT_FOUND_404"),
-    BOOKMARK_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 북마크가 없습니다. bookmarkId = ", "NOT_FOUND_404"),
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자가 없습니다.", "NOT_FOUND_404"),
+    LIKE_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 좋아요가 없습니다.", "NOT_FOUND_404"),
+    COMMENT_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 댓글이 없습니다.", "NOT_FOUND_404"),
+    BOOKMARK_NOT_FOUND_EXCEPTION(HttpStatus.NOT_FOUND, "해당 북마크가 없습니다.", "NOT_FOUND_404"),
 
     // 500 INTERNAL SERVER ERROR
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 서버 에러가 발생했습니다", "INTERNAL_SERVER_ERROR_500");
