@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  backend:
+    image: ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}
+    container_name: ${DOCKER_CONTAINER}
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_CONFIG_LOCATION: /config/application-prod.yml
+    volumes:
+      - /home/${EC2_USER}/app/config/application-prod.yml:/config/application-prod.yml
+    restart: always
