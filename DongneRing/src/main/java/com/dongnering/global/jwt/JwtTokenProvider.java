@@ -1,7 +1,7 @@
 package com.dongnering.global.jwt;
 
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.common.error.ErrorCode;
 import com.dongnering.common.exception.BusinessException;
 import io.jsonwebtoken.*;

@@ -1,4 +1,4 @@
-package com.dongnering.mypage.api;
+package com.dongnering.member.api;
 
 import com.dongnering.oauth2.google.application.GoogleOAuthService;
 import lombok.RequiredArgsConstructor;

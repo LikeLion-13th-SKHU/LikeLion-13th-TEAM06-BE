@@ -1,6 +1,6 @@
-package com.dongnering.mypage.domain.repository;
+package com.dongnering.member.domain.repository;
 
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

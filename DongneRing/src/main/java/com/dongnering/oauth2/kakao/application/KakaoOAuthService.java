@@ -1,9 +1,9 @@
 package com.dongnering.oauth2.kakao.application;
 
 import com.dongnering.global.jwt.JwtTokenProvider;
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.Role;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.oauth2.kakao.api.dto.KakaoTokenResponse;
 import com.dongnering.oauth2.kakao.api.dto.KakaoUserInfo;
 import com.google.gson.Gson;

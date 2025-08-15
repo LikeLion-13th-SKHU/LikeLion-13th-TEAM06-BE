@@ -1,9 +1,9 @@
 package com.dongnering.oauth2.google.application;
 
 import com.google.gson.Gson;
-import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Role;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.oauth2.google.api.dto.GoogleTokenResponse;
 import com.dongnering.oauth2.google.api.dto.GoogleUserInfo;
 import com.dongnering.global.jwt.JwtTokenProvider;
