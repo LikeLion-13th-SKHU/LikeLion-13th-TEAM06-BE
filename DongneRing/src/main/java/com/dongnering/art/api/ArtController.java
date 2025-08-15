@@ -75,14 +75,6 @@ public class ArtController {
         return ApiResTemplate.successWithNoContent(SuccessCode.UNLIKE_SUCCESS);
     }
 
-    //멤버가 댓글단 아트만 보여주기
-    @GetMapping("/personalComment")
-    @Operation(summary = "멤버가 댓글단 아트만 조회", description = "멤버가 댓글단 아트만 조회")
-    public ApiResTemplate<Page<ArtListDto>> artFinByPersonalComment(Principal principal, @ParameterObject Pageable pageable){
-        Page<ArtListDto> artList = artService.artFindByComment(principal, pageable);
-        return ApiResTemplate.successResponse(SuccessCode.ARTS_GET_SUCCESS, artList);
-    }
-
     //멤버가 좋아요한 아트만 보여주기
     @GetMapping("/personalLike")
     @Operation(summary = "멤버가 좋아요한 아트만 보여주기", description = "멤버가 좋아요한 아트만 보여주기")

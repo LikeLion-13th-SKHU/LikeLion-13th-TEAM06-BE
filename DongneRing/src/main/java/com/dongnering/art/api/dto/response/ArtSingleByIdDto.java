@@ -2,7 +2,6 @@ package com.dongnering.art.api.dto.response;
 
 
 import com.dongnering.art.domain.Art;
-import com.dongnering.comment.artComment.api.dto.response.ArtCommentResponseDto;
 import lombok.Builder;
 
 import java.util.List;
@@ -24,13 +23,12 @@ public record ArtSingleByIdDto(
 
         String imageUrl,
         Long likeCount,
-        boolean liked,
+        boolean liked
 
-        List<ArtCommentResponseDto> artComments
 
 ) {
 
-    public static ArtSingleByIdDto from(Art art, boolean liked, List<ArtCommentResponseDto> artCommentResponseDtos){
+    public static ArtSingleByIdDto from(Art art, boolean liked){
         return ArtSingleByIdDto.builder()
                 .artId(art.getArtId())
                 .title(art.getTitle())
@@ -41,7 +39,6 @@ public record ArtSingleByIdDto(
                 .imageUrl(art.getImageUrl())
                 .likeCount(art.getLikeCount())
                 .liked(liked)
-                .artComments(artCommentResponseDtos)
                 .build();
 
     }

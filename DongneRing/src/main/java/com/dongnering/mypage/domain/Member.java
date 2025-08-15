@@ -1,6 +1,5 @@
 package com.dongnering.mypage.domain;
 
-import com.dongnering.comment.artComment.domain.ArtComment;
 import com.dongnering.comment.newsComment.domain.NewsComment;
 import com.dongnering.memberArtLike.MemberArtLike;
 import com.dongnering.memberInterest.domain.MemberInterest;
@@ -65,8 +64,6 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewsComment> newsCommentList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArtComment> artCommentList = new ArrayList<>();
 
     @Builder
     private Member(String nickname, String email, String memberPictureUrl , Role role, Provider provider){

@@ -1,7 +1,6 @@
 package com.dongnering.art.domain;
 
 
-import com.dongnering.comment.artComment.domain.ArtComment;
 import com.dongnering.memberArtLike.MemberArtLike;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -39,9 +38,6 @@ public class Art {
 
     @OneToMany(mappedBy = "art" ,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberArtLike> memberArtLikes = new ArrayList<>();
-
-    @OneToMany(mappedBy = "art",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArtComment> artCommentList = new ArrayList<>();
 
 
     @Builder

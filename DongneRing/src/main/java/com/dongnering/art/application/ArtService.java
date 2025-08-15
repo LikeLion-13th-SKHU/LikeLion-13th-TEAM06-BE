@@ -5,9 +5,6 @@ import com.dongnering.art.api.dto.response.ArtListDto;
 import com.dongnering.art.api.dto.response.ArtSingleByIdDto;
 import com.dongnering.art.domain.Art;
 import com.dongnering.art.domain.repository.ArtRepository;
-import com.dongnering.comment.artComment.api.dto.response.ArtCommentResponseDto;
-import com.dongnering.comment.artComment.application.ArtCommentService;
-import com.dongnering.comment.artComment.domain.ArtComment;
 import com.dongnering.memberArtLike.MemberArtLike;
 import com.dongnering.memberArtLike.MemberArtLikeRepository;
 
@@ -33,7 +30,6 @@ public class ArtService {
     private final MemberRepository memberRepository;
     private final ArtRepository artRepository;
     private final MemberArtLikeRepository memberArtLikeRepository;
-    private final ArtCommentService artCommentService;
 
 
     //아트 Id별 단건 조회
@@ -42,10 +38,9 @@ public class ArtService {
         Art art = artRepository.findById(artId).orElseThrow(()-> new IllegalStateException("해당 아트가 없습니다. id=" + artId));
         List<Long> memberLikedArtIds = memberArtLikeRepository.findArtByMember(member);
 
-        List<ArtCommentResponseDto> artComment = artCommentService.findArtComment(art.getArtId());
 
         boolean liked = memberLikedArtIds.contains(art.getArtId());
-        return ArtSingleByIdDto.from(art, liked, artComment);
+        return ArtSingleByIdDto.from(art, liked);
     }
 
     //아트 지역별 조회
@@ -122,17 +117,6 @@ public class ArtService {
     }
 
 
-    //댓글단 아트들만 보여주기
-    public Page<ArtListDto> artFindByComment(Principal principal, Pageable pageable){
-        Pageable sortPageable = pageConverter(pageable);
-        Member member = findMemberByMemberId(principal);
-        List<ArtComment> artCommentList = member.getArtCommentList();
-        List<Long> likeArtIds = memberArtLikeRepository.findArtByMember(member);
-        List<Long> list = artCommentList.stream().map(artComment -> artComment.getArt().getArtId()).toList();
-
-        Page<Art> artList = artRepository.findArtByCommentId(list, sortPageable);
-        return pageLastLikeCommentConverter(artList, likeArtIds);
-    }
 
     //좋아요한 아트들만 보여주기
     public Page<ArtListDto> artFindByLiked(Principal principal, Pageable pageable){
@@ -163,8 +147,7 @@ public class ArtService {
     private Page<ArtListDto> pageLastLikeCommentConverter (Page<Art> artsPage, List<Long> likedArtIds){
         return artsPage.map(art -> {
             boolean liked = likedArtIds.contains(art.getArtId());
-            Long artCommentCount = artCommentService.findArtCommentCount(art);
-            return ArtListDto.from(art, liked, artCommentCount);
+            return ArtListDto.from(art, liked);
         });
     }
 

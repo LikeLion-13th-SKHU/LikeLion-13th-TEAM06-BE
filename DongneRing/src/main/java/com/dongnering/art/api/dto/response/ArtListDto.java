@@ -21,13 +21,13 @@ public record ArtListDto(
 
         String imageUrl,
         Long likeCount,
-        boolean liked,
+        boolean liked
 
-        Long artCommentCount
+
 
 ) {
 
-    public static ArtListDto from(Art art, boolean liked, Long artCommentCount){
+    public static ArtListDto from(Art art, boolean liked){
         return ArtListDto.builder()
                 .artId(art.getArtId())
                 .title(art.getTitle())
@@ -38,7 +38,6 @@ public record ArtListDto(
                 .imageUrl(art.getImageUrl())
                 .likeCount(art.getLikeCount())
                 .liked(liked)
-                .artCommentCount(artCommentCount)
                 .build();
 
     }
