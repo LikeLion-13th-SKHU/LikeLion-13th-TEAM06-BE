@@ -1,7 +1,7 @@
 package com.dongnering.comment.newsComment.domain.repository;
 
 import com.dongnering.comment.newsComment.domain.NewsComment;
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import com.dongnering.news.domain.News;
 import org.springframework.data.jpa.repository.JpaRepository;
 

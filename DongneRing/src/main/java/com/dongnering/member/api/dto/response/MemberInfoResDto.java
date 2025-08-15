@@ -1,6 +1,6 @@
-package com.dongnering.mypage.api.dto.response;
+package com.dongnering.member.api.dto.response;
 
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 
 public record MemberInfoResDto(
         String email,

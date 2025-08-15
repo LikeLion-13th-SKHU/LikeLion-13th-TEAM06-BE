@@ -1,4 +1,4 @@
-package com.dongnering.mypage.api.dto.request;
+package com.dongnering.member.api.dto.request;
 
 
 public record MemberJoinReqDto(

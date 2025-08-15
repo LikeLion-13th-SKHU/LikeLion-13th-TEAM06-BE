@@ -1,4 +1,4 @@
-package com.dongnering.mypage.domain;
+package com.dongnering.member.domain;
 
 public enum Role {
     ROLE_USER,
