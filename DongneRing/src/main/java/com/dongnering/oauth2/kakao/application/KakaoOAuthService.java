@@ -113,7 +113,7 @@ public class KakaoOAuthService {
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .email(email)
                         .nickname(name)
-                        .pictureUrl(picture)
+                        .memberPictureUrl(picture)
                         .role(Role.ROLE_USER)
                         .provider(Member.Provider.KAKAO) // ⚠️ enum에 KAKAO 추가 필요
                         .build()));
