@@ -22,15 +22,21 @@ public class MailService {
 
     private static final String SENDER_NAME  = "동네링";
 
-    public void sendDailyNews(String to, String title, String summary, String url) throws MessagingException, UnsupportedEncodingException {
+    // 가입한 모든 사용자 기준 메일 전송
+    public void sendDailyNews(String to, String newsTitle, String newsContent, String artTitle, String artImageUrl, String newsUrl, String artUrl)
+            throws MessagingException, UnsupportedEncodingException {
+
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
         // Thymeleaf
         Context context = new Context();
-        context.setVariable("title", title);
-        context.setVariable("summary", summary);
-        context.setVariable("url", url);
+        context.setVariable("newsTitle", newsTitle);
+        context.setVariable("newsContent", newsContent);
+        context.setVariable("artTitle", artTitle);
+        context.setVariable("artImageUrl", artImageUrl);
+        context.setVariable("newsUrl", newsUrl);
+        context.setVariable("artUrl", artUrl);
         context.setVariable("senderEmail", mailProperties.getUsername());
 
         String html = templateEngine.process("mail/news", context);
@@ -38,6 +44,33 @@ public class MailService {
         helper.setTo(to);
         helper.setFrom(mailProperties.getUsername(), SENDER_NAME);
         helper.setSubject("🔥 오늘의 핫 뉴스 - 동네링");
+        helper.setText(html, true);
+
+        javaMailSender.send(message);
+    }
+
+    // Test: 로그인한 사용자 이메일 기준 메일 전송
+    public void sendDailyNewsWithMember(String email, String newsTitle, String newsContent, String artTitle, String artImageUrl, String newsUrl, String artUrl)
+            throws MessagingException, UnsupportedEncodingException {
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        // Thymeleaf
+        Context context = new Context();
+        context.setVariable("newsTitle", newsTitle);
+        context.setVariable("newsContent", newsContent);
+        context.setVariable("artTitle", artTitle);
+        context.setVariable("artImageUrl", artImageUrl);
+        context.setVariable("newsUrl", newsUrl);
+        context.setVariable("artUrl", artUrl);
+        context.setVariable("senderEmail", mailProperties.getUsername());
+
+        String html = templateEngine.process("mail/news", context);
+
+        helper.setTo(email);
+        helper.setFrom(mailProperties.getUsername(), SENDER_NAME);
+        helper.setSubject("🔥 오늘의 추천 뉴스&예술 - 동네링");
         helper.setText(html, true);
 
         javaMailSender.send(message);
