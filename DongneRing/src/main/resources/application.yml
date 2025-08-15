@@ -8,9 +8,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#  config:
-#    import: "classpath:application-oauth.yml"
-
   jpa:
     hibernate:
       ddl-auto: update
@@ -20,6 +17,22 @@ spring:
         format_sql: true
         show_sql: true
     open-in-view: false
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${mail.username}
+    password: ${mail.password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
 logging:
   level:

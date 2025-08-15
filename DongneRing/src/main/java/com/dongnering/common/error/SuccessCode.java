@@ -19,6 +19,7 @@ public enum SuccessCode {
     BOOKMARK_COUNT_SUCCESS(HttpStatus.OK, "스크랩 개수 조회에 성공했습니다."),
 
     // 201 CREATED
+    EMAIL_SEND_SUCCESS(HttpStatus.CREATED, "이메일 전송에 성공하였습니다."),
     REFRESH_TOKEN_SUCCESS(HttpStatus.CREATED, "리프레시 토큰으로 액세스 토큰 재발급에 성공하였습니다."),
     MEMBER_JOIN_SUCCESS(HttpStatus.CREATED, "회원가입에 성공하였습니다."),  // 새로 추가
     MEMBER_LOGIN_SUCCESS(HttpStatus.CREATED, "로그인에 성공하였습니다."),    // 기존에 있음
