@@ -1,9 +1,9 @@
 package com.dongnering.oauth2.kakao.application;
 
 import com.dongnering.global.jwt.JwtTokenProvider;
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.Role;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.oauth2.kakao.api.dto.KakaoTokenResponse;
 import com.dongnering.oauth2.kakao.api.dto.KakaoUserInfo;
 import com.google.gson.Gson;
@@ -94,7 +94,7 @@ public class KakaoOAuthService {
     }
 
     // 3) 로그인/회원가입 후 JWT 발급
-    public String loginOrSignUp(String accessToken) {
+    public Member loginOrSignUp(String accessToken) {
         KakaoUserInfo userInfo = getUserInfo(accessToken);
 
         if (userInfo.getKakaoAccount() == null || userInfo.getKakaoAccount().getEmail() == null) {
@@ -117,12 +117,11 @@ public class KakaoOAuthService {
                         .role(Role.ROLE_USER)
                         .provider(Member.Provider.KAKAO) // ⚠️ enum에 KAKAO 추가 필요
                         .build()));
-
-        return jwtTokenProvider.generateToken(member);
+        return member;
     }
 
     // 4) 코드만 받아 전체 로그인 처리
-    public String loginWithCode(String code) {
+    public Member processLogin(String code) {
         String accessToken = getKakaoAccessToken(code);
         return loginOrSignUp(accessToken);
     }
