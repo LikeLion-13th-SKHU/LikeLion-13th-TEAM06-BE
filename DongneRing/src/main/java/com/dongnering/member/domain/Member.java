@@ -1,4 +1,4 @@
-package com.dongnering.mypage.domain;
+package com.dongnering.member.domain;
 
 import com.dongnering.comment.newsComment.domain.NewsComment;
 import com.dongnering.memberArtLike.MemberArtLike;
@@ -49,6 +49,8 @@ public class Member {
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    private String refreshToken;
+
     //멤버 - 관심사태그
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberInterest> memberInterests = new ArrayList<>();
@@ -66,12 +68,17 @@ public class Member {
 
 
     @Builder
-    private Member(String nickname, String email, String memberPictureUrl , Role role, Provider provider){
+    private Member(String nickname, String email, String memberPictureUrl , Role role, Provider provider, String refreshToken){
         this.nickname = nickname;
         this.email =email;
         this.role =role;
         this.provider = provider;
         this.memberPictureUrl = memberPictureUrl;
+        this.refreshToken = refreshToken;
+    }
+
+    public void saveRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 
     public void setLocation(String location) {

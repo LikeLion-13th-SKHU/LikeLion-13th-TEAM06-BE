@@ -1,7 +1,7 @@
 package com.dongnering.global.jwt;
 
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.common.error.ErrorCode;
 import com.dongnering.common.exception.BusinessException;
 import io.jsonwebtoken.*;
@@ -33,6 +33,9 @@ public class JwtTokenProvider {
 
     @Value("${token.expire.time}")
     private String tokenExpireTime;
+
+    @Value("${refresh-token.expire.time}")
+    private String refreshTokenExpireTime;
 
     @Value("${jwt.secret}")
     private String secret;
@@ -105,5 +108,18 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    // refreshToken 생성
+    public String generateRefreshToken(Member member) {
+        Date now = new Date();
+        Date expireDate = new Date(now.getTime() + Long.parseLong(refreshTokenExpireTime));
+
+        return Jwts.builder()
+                .setSubject(member.getMemberId().toString())
+                .setIssuedAt(now)
+                .setExpiration(expireDate)
+                .signWith(SignatureAlgorithm.HS256, secret)
+                .compact();
     }
 }

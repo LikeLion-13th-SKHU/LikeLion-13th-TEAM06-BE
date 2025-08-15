@@ -3,9 +3,9 @@ package com.dongnering.oauth2.naver.application;
 import com.dongnering.oauth2.naver.api.dto.NaverTokenResponse;
 import com.dongnering.oauth2.naver.api.dto.NaverUserInfo;
 import com.google.gson.Gson;
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.Role;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -90,7 +90,7 @@ public class NaverOAuthService {
     }
 
     // 3) 로그인 또는 회원가입 후 JWT 토큰 생성 및 반환
-    public String loginOrSignUp(String accessToken) {
+    public Member loginOrSignUp(String accessToken) {
         NaverUserInfo userInfo = getUserInfo(accessToken);
 
         // 네이버는 이메일 인증 필드가 없거나 따로 체크 필요할 수 있음
@@ -107,6 +107,11 @@ public class NaverOAuthService {
                         .provider(Member.Provider.NAVER)
                         .build()));
 
-        return jwtTokenProvider.generateToken(member);
+        return member;
+    }
+
+    public Member processLogin(String code, String state) {
+        String accessToken = getNaverAccessToken(code, state);
+        return loginOrSignUp(accessToken);
     }
 }

@@ -2,7 +2,7 @@ package com.dongnering.memberArtLike;
 
 
 import com.dongnering.art.domain.Art;
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;

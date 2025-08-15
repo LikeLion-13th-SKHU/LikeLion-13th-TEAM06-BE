@@ -5,8 +5,8 @@ import com.dongnering.comment.newsComment.api.dto.requsest.NewsCommentRequestDto
 import com.dongnering.comment.newsComment.api.dto.response.NewsCommentResponseDto;
 import com.dongnering.comment.newsComment.domain.NewsComment;
 import com.dongnering.comment.newsComment.domain.repository.NewsCommentRepository;
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.news.domain.News;
 import com.dongnering.news.domain.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;

@@ -8,8 +8,8 @@ import com.dongnering.art.domain.repository.ArtRepository;
 import com.dongnering.memberArtLike.MemberArtLike;
 import com.dongnering.memberArtLike.MemberArtLikeRepository;
 
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

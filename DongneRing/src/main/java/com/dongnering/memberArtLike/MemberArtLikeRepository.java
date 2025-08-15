@@ -2,7 +2,7 @@ package com.dongnering.memberArtLike;
 
 
 import com.dongnering.art.domain.Art;
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

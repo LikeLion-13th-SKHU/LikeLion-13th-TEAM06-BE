@@ -2,7 +2,7 @@ package com.dongnering.memberInterest.domain;
 
 
 import com.dongnering.interest.domain.Interest;
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,9 +1,9 @@
 package com.dongnering.oauth2.google.application;
 
 import com.google.gson.Gson;
-import com.dongnering.mypage.domain.Role;
-import com.dongnering.mypage.domain.Member;
-import com.dongnering.mypage.domain.repository.MemberRepository;
+import com.dongnering.member.domain.Role;
+import com.dongnering.member.domain.Member;
+import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.oauth2.google.api.dto.GoogleTokenResponse;
 import com.dongnering.oauth2.google.api.dto.GoogleUserInfo;
 import com.dongnering.global.jwt.JwtTokenProvider;
@@ -97,7 +97,7 @@ public class GoogleOAuthService {
 
 
     // 로그인 또는 회원가입 후 JWT 토큰 생성 및 반환
-    public String loginOrSignUp(String googleAccessToken) {
+    public Member loginOrSignUp(String googleAccessToken) {
         GoogleUserInfo userInfo = getUserInfo(googleAccessToken);
 
         if (userInfo.getVerifiedEmail() == null || !userInfo.getVerifiedEmail()) {
@@ -113,10 +113,10 @@ public class GoogleOAuthService {
                         .provider(Member.Provider.GOOGLE)  // 구글 소셜 로그인 표시
                         .build()));
 
-        return jwtTokenProvider.generateToken(member);
+        return member;
     }
 
-    public String loginWithCode(String code) {
+    public Member processLogin(String code) {
         // code로 access token 받기
         String accessToken = getGoogleAccessToken(code);
 

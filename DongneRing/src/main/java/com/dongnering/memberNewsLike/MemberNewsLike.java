@@ -2,7 +2,7 @@ package com.dongnering.memberNewsLike;
 
 
 
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import com.dongnering.news.domain.News;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
