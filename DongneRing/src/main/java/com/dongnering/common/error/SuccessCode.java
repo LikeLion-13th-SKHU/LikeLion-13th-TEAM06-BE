@@ -24,7 +24,39 @@ public enum SuccessCode {
     MEMBER_LOGIN_SUCCESS(HttpStatus.CREATED, "로그인에 성공하였습니다."),    // 기존에 있음
     LIKE_SAVE_SUCCESS(HttpStatus.CREATED, "좋아요가 성공적으로 등록되었습니다."),
     COMMENT_SAVE_SUCCESS(HttpStatus.CREATED, "댓글이 성공적으로 등록되었습니다."),
-    BOOKMARK_SAVE_SUCCESS(HttpStatus.CREATED,"북마크가 성공적으로 등록되었습니다.");
+    BOOKMARK_SAVE_SUCCESS(HttpStatus.CREATED,"북마크가 성공적으로 등록되었습니다."),
+
+
+
+
+
+
+
+
+
+
+
+    MEMBER_SAVE_SUCCESS(HttpStatus.CREATED, "사용자가 성공적으로 생성되었습니다."),
+    MEMBER_FIRST_UPDATE_SUCCESS(HttpStatus.CREATED, "사용자가 초기 정보가 성공적으로 생성되었습니다."),
+    LIKE_SUCCESS(HttpStatus.CREATED, "좋아요 성공."),
+    UNLIKE_SUCCESS(HttpStatus.CREATED, "좋아요 취소 성공."),
+    NEWS_GET_SUCCESS(HttpStatus.CREATED, "뉴스 조회 성공."),
+    ARTS_GET_SUCCESS(HttpStatus.CREATED, "아트 조회 성공."),
+    NEWS_LIKE_SUCCESS(HttpStatus.CREATED, "뉴스 좋아요 성공."),
+    NEWS_DELETE_SUCCESS(HttpStatus.CREATED, "뉴스 삭제 성공.");
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private final HttpStatus httpStatus;
     private final String message;

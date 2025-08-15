@@ -14,10 +14,16 @@ public class GoogleOAuthController {
 
     private final GoogleOAuthService googleOAuthService;
 
+
+    //만약 로그인 실패시 어디론가 보내야함 - 프론트앤드 맨처음 페이지로?
     @GetMapping
     public ResponseEntity<ApiResTemplate<String>> googleLogin(@RequestParam String code) {
         String accessToken = googleOAuthService.getGoogleAccessToken(code);
         String jwtToken = googleOAuthService.loginOrSignUp(accessToken);
+
+
         return ResponseEntity.ok(ApiResTemplate.successResponse(SuccessCode.GET_SUCCESS, jwtToken));
     }
+
+
 }

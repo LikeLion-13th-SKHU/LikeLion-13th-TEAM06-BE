@@ -108,7 +108,7 @@ public class GoogleOAuthService {
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .email(userInfo.getEmail())
                         .nickname(userInfo.getName())
-                        .pictureUrl(userInfo.getPictureUrl())
+                        .memberPictureUrl(userInfo.getPictureUrl())
                         .role(Role.ROLE_USER)
                         .provider(Member.Provider.GOOGLE)  // 구글 소셜 로그인 표시
                         .build()));

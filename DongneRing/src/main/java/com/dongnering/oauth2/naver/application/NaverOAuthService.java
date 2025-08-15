@@ -102,7 +102,7 @@ public class NaverOAuthService {
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .email(userInfo.getResponse().getEmail())
                         .nickname(userInfo.getResponse().getName())
-                        .pictureUrl(userInfo.getResponse().getProfileImage())
+                        .memberPictureUrl(userInfo.getResponse().getProfileImage())
                         .role(Role.ROLE_USER)
                         .provider(Member.Provider.NAVER)
                         .build()));
