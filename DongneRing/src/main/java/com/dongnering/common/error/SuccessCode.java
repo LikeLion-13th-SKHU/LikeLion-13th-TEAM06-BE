@@ -19,11 +19,45 @@ public enum SuccessCode {
     BOOKMARK_COUNT_SUCCESS(HttpStatus.OK, "스크랩 개수 조회에 성공했습니다."),
 
     // 201 CREATED
+    EMAIL_SEND_SUCCESS(HttpStatus.CREATED, "이메일 전송에 성공하였습니다."),
     REFRESH_TOKEN_SUCCESS(HttpStatus.CREATED, "리프레시 토큰으로 액세스 토큰 재발급에 성공하였습니다."),
-    MEMBER_LOGIN_SUCCESS(HttpStatus.CREATED, "로그인에 성공하였습니다."),
+    MEMBER_JOIN_SUCCESS(HttpStatus.CREATED, "회원가입에 성공하였습니다."),  // 새로 추가
+    MEMBER_LOGIN_SUCCESS(HttpStatus.CREATED, "로그인에 성공하였습니다."),    // 기존에 있음
     LIKE_SAVE_SUCCESS(HttpStatus.CREATED, "좋아요가 성공적으로 등록되었습니다."),
     COMMENT_SAVE_SUCCESS(HttpStatus.CREATED, "댓글이 성공적으로 등록되었습니다."),
-    BOOKMARK_SAVE_SUCCESS(HttpStatus.CREATED,"북마크가 성공적으로 등록되었습니다.");
+    BOOKMARK_SAVE_SUCCESS(HttpStatus.CREATED,"북마크가 성공적으로 등록되었습니다."),
+
+
+
+
+
+
+
+
+
+
+
+    MEMBER_SAVE_SUCCESS(HttpStatus.CREATED, "사용자가 성공적으로 생성되었습니다."),
+    MEMBER_FIRST_UPDATE_SUCCESS(HttpStatus.CREATED, "사용자가 초기 정보가 성공적으로 생성되었습니다."),
+    LIKE_SUCCESS(HttpStatus.CREATED, "좋아요 성공."),
+    UNLIKE_SUCCESS(HttpStatus.CREATED, "좋아요 취소 성공."),
+    NEWS_GET_SUCCESS(HttpStatus.CREATED, "뉴스 조회 성공."),
+    ARTS_GET_SUCCESS(HttpStatus.CREATED, "아트 조회 성공."),
+    NEWS_LIKE_SUCCESS(HttpStatus.CREATED, "뉴스 좋아요 성공."),
+    NEWS_DELETE_SUCCESS(HttpStatus.CREATED, "뉴스 삭제 성공.");
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private final HttpStatus httpStatus;
     private final String message;
