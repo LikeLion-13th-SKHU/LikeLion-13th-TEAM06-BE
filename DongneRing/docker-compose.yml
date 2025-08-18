@@ -12,3 +12,12 @@ services:
     volumes:
       - /home/${EC2_USER}/app/config/application-prod.yml:/config/application-prod.yml
     restart: always
+    depends_on:
+      - ai-service
+
+  ai-service:
+    image: hyunrnin/hackathon-ai:1.0.0
+    container_name: ai-service
+    restart: always
+    expose:
+      - "8000"
