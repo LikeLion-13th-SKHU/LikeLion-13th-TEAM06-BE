@@ -83,6 +83,13 @@ public class ArtController {
         return ApiResTemplate.successResponse(SuccessCode.ARTS_GET_SUCCESS, artList);
     }
 
+    @DeleteMapping("/artDeleteAll")
+    @Operation(summary = "모든 아트 지우기", description = "모든 아트 지우기")
+    public ApiResTemplate<String> artDeleteAll(Principal principal){
+        artService.artAllDelete();
+        return ApiResTemplate.successWithNoContent(SuccessCode.ART_DELETE_SUCCESS);
+    }
+
 
 
 }

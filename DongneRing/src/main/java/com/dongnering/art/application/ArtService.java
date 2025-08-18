@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
+import java.security.PublicKey;
 import java.util.List;
 
 @Service
@@ -128,6 +129,12 @@ public class ArtService {
 
         return pageLastLikeCommentConverter(artPage, likedArtIds);
 
+    }
+
+    //아트 전체 삭제
+    @Transactional
+    public void artAllDelete(){
+        artRepository.deleteAll();
     }
 
 

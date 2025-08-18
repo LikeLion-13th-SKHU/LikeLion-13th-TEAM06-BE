@@ -57,7 +57,7 @@ public class NewsService {
         List<Long> likedNewsIds = memberNewsLikeRepository.findNewsByMember(member);
 
         //기사별 댓글 가져오기 - 기사 id별
-        List<NewsCommentResponseDto> newsComment = newsCommentService.findNewsComment(news.getNewsId());
+        List<NewsCommentResponseDto> newsComment = newsCommentService.findNewsComment(news.getNewsId(), principal);
 
         //기사별 관심가 가져오기
         List<InterestType> interestTypes = newsInterestRepository.findInterestTypesByNews(news);

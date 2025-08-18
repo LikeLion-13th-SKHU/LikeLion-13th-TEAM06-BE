@@ -21,6 +21,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class ArtInitializer {
 
 
             //예술 조회 개수 -> 1000개로 갈듯
-            String searchContentNumber = "20";
+            String searchContentNumber = "30";
 
             try {
 
@@ -79,8 +81,19 @@ public class ArtInitializer {
                     Long identifyId = Long.valueOf(identifyStr);
 
                     String title = xpath.evaluate("title", item).trim();
-                    String startDate = xpath.evaluate("startDate", item).trim();
-                    String endDate = xpath.evaluate("endDate", item).trim();
+
+                    String startDateBefore = xpath.evaluate("startDate", item).trim();
+
+
+                    String startDate = dateChange(startDateBefore);
+
+                    String endDateBefore = xpath.evaluate("endDate", item).trim();
+
+                    String endDate = dateChange(endDateBefore);
+
+
+
+
                     String location = xpath.evaluate("place", item).trim();
                     String area = xpath.evaluate("area", item).trim();
                     String imgUrl = xpath.evaluate("thumbnail", item).trim();
@@ -115,6 +128,18 @@ public class ArtInitializer {
         };
 
 
+    }
+
+    private String dateChange(String startDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        LocalDate date = LocalDate.parse(startDate, inputFormatter);
+        String formatted = date.format(outputFormatter);
+
+        System.out.println("test : " + formatted);
+
+        return formatted;
     }
 
 }
