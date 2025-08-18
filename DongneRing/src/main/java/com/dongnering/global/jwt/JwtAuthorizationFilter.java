@@ -1,10 +1,12 @@
 package com.dongnering.global.jwt;
 
+import com.dongnering.common.exception.BusinessException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,15 +24,23 @@ public class JwtAuthorizationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String token = resolveToken((HttpServletRequest) request);
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        try {
+            String token = resolveToken(httpRequest);
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+            chain.doFilter(request, response);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        } catch (BusinessException ex) {
+            httpResponse.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            httpResponse.setContentType("application/json;charset=UTF-8");
+            String json = String.format("{\"code\":\"%s\", \"message\":\"%s\"}", ex.getErrorCode().getCode(), ex.getMessage());
+            httpResponse.getWriter().write(json);
         }
-
-        chain.doFilter(request, response);
     }
 
     // 요청 헤더에서 토큰 추출

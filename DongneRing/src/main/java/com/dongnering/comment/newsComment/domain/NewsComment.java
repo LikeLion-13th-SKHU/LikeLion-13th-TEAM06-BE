@@ -1,6 +1,6 @@
 package com.dongnering.comment.newsComment.domain;
 
-import com.dongnering.mypage.domain.Member;
+import com.dongnering.member.domain.Member;
 import com.dongnering.news.domain.News;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
