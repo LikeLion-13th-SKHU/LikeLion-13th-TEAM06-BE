@@ -1,8 +1,9 @@
+// 파일: Member.java
 package com.dongnering.member.domain;
 
+import com.dongnering.memberInterest.domain.MemberInterest;
 import com.dongnering.comment.newsComment.domain.NewsComment;
 import com.dongnering.memberArtLike.MemberArtLike;
-import com.dongnering.memberInterest.domain.MemberInterest;
 import com.dongnering.memberNewsLike.MemberNewsLike;
 import jakarta.persistence.*;
 import lombok.*;
@@ -68,8 +69,8 @@ public class Member {
     @Builder
     private Member(String nickname, String email, String memberPictureUrl , Role role, Provider provider){
         this.nickname = nickname;
-        this.email =email;
-        this.role =role;
+        this.email = email;
+        this.role = role;
         this.provider = provider;
         this.memberPictureUrl = memberPictureUrl;
     }
@@ -80,5 +81,12 @@ public class Member {
 
     public void setAge(Long age) {
         this.age = age;
+    }
+
+    //프로필 수정용 메서드
+    public void updateProfile(String nickname, Long age, String location) {
+        if (nickname != null) this.nickname = nickname;
+        if (age != null) this.age = age;
+        if (location != null) this.location = location;
     }
 }
