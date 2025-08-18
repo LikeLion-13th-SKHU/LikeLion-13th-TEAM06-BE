@@ -51,6 +51,10 @@ public class Member {
 
     private String refreshToken;
 
+    //최초 개인화 입력 여부
+    @Column(nullable = false)
+    private boolean profileCompleted = false;
+
     //멤버 - 관심사태그
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberInterest> memberInterests = new ArrayList<>();
@@ -65,7 +69,6 @@ public class Member {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewsComment> newsCommentList = new ArrayList<>();
-
 
     @Builder
     private Member(String nickname, String email, String memberPictureUrl , Role role, Provider provider, String refreshToken){
@@ -94,5 +97,15 @@ public class Member {
         if (nickname != null) this.nickname = nickname;
         if (age != null) this.age = age;
         if (location != null) this.location = location;
+    }
+
+    // 개인화 완료 처리 메서드
+    public void completeProfile() {
+        this.profileCompleted = true;
+    }
+
+    // boolean 필드용 메서드 추가
+    public boolean getProfileCompleted() {
+        return this.profileCompleted;
     }
 }

@@ -38,7 +38,7 @@ public class OauthService {
 
     // refreshToken으로 새로운 accessToken 생성
     public ResponseEntity<ApiResTemplate<String>> reissueAccessToken(String refreshToken) {
-        Member member = memberRepository.findByRefreshToken(refreshToken)
+        Member member = (Member) memberRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NO_AUTHORIZATION_EXCEPTION
                         , ErrorCode.NO_AUTHORIZATION_EXCEPTION.getMessage()));
 

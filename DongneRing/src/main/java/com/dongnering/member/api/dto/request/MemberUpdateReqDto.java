@@ -1,15 +1,17 @@
 package com.dongnering.member.api.dto.request;
 
+import com.dongnering.interest.domain.InterestType;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+//프로필 수정용
 @Getter
-@Setter
+@NoArgsConstructor
 public class MemberUpdateReqDto {
-
     private String nickname;
     private Long age;
     private String location;
-
-    // 선택적으로 관심사나 프로필 사진 등 추가 가능
+    List<InterestType> interests;
 }
