@@ -59,8 +59,11 @@ public class NewsService {
         //기사별 댓글 가져오기 - 기사 id별
         List<NewsCommentResponseDto> newsComment = newsCommentService.findNewsComment(news.getNewsId());
 
+        //기사별 관심가 가져오기
+        List<InterestType> interestTypes = newsInterestRepository.findInterestTypesByNews(news);
+
         boolean liked = likedNewsIds.contains(news.getNewsId());
-        return NewsSingleByIdDto.from(news, liked, newsComment);
+        return NewsSingleByIdDto.from(news, liked, newsComment, interestTypes);
     }
 
 
@@ -72,6 +75,8 @@ public class NewsService {
 
         //기사 좋아요 당겨오기 - 멤버뵬
         List<Long> likedNewsIds = memberNewsLikeRepository.findNewsByMember(member);
+
+
 
         return pageLastLikeCommentConverter(newsPage, likedNewsIds);
     };
@@ -245,12 +250,16 @@ public class NewsService {
         return memberRepository.findById(memberId).orElseThrow(()-> new IllegalStateException("해당 멤버가 없습니다. id=" + memberId));
     }
 
-    //최종 클라이언트에 전달되는 객체 - 뉴스마다 좋아요 + 댓글 개수 추가해서 전송
+    //최종 클라이언트에 전달되는 객체 - 뉴스마다 좋아요 + 댓글 개수 추가해서 전송 + 카테고리
     private Page<NewsListDto> pageLastLikeCommentConverter (Page<News> newsPage, List<Long> likedNewsIds ){
         return newsPage.map(news -> {
             boolean liked = likedNewsIds.contains(news.getNewsId());
             Long num = newsCommentService.findCommentNumber(news);
-            return NewsListDto.from(news, liked, num);
+
+            List<InterestType> interestTypes = newsInterestRepository.findInterestTypesByNews(news);
+
+
+            return NewsListDto.from(news, liked, num, interestTypes);
         });
     }
 
