@@ -1,6 +1,7 @@
 package com.dongnering.art.api;
 
 
+import com.dongnering.art.api.dto.ArtLikeDisLikeDto;
 import com.dongnering.art.api.dto.response.ArtListDto;
 import com.dongnering.art.api.dto.response.ArtSingleByIdDto;
 import com.dongnering.art.application.ArtService;
@@ -59,21 +60,17 @@ public class ArtController {
         return ApiResTemplate.successResponse(SuccessCode.ARTS_GET_SUCCESS, newsList);
     }
 
-    //art 좋아요
-    @GetMapping("/like/{artId}")
-    @Operation(summary = "art 좋아요", description = "art 좋아요 버튼")
-    public ApiResTemplate<String> artLike(Principal principal, @PathVariable Long artId){
-        artService.likeArt(principal, artId);
-        return ApiResTemplate.successWithNoContent(SuccessCode.LIKE_SUCCESS);
+    //art 좋아요 통합
+    @PostMapping("/like")
+    @Operation(summary = "art 좋아요 통합(토글식)", description = "art 좋아요 통합(토글식)")
+    public ApiResTemplate<Boolean> artLikeUnlike(Principal principal, @RequestBody ArtLikeDisLikeDto artLikeDisLikeDto){
+        boolean artLikeStatus = artService.likeUnlikeArt(principal, artLikeDisLikeDto);
+        if (artLikeStatus){
+            return ApiResTemplate.successResponse(SuccessCode.LIKE_SUCCESS, artLikeStatus);
+        }
+        return ApiResTemplate.successResponse(SuccessCode.UNLIKE_SUCCESS, artLikeStatus);
     }
 
-    //art 싫어요
-    @DeleteMapping("/like/{artId}")
-    @Operation(summary = "art 싫어요", description = "art 싫어요 버튼")
-    public ApiResTemplate<String> artUnLike(Principal principal, @PathVariable Long artId){
-        artService.unLikeArt(principal, artId);
-        return ApiResTemplate.successWithNoContent(SuccessCode.UNLIKE_SUCCESS);
-    }
 
     //멤버가 좋아요한 아트만 보여주기
     @GetMapping("/personalLike")

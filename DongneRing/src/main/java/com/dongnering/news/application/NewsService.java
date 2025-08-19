@@ -12,6 +12,7 @@ import com.dongnering.memberNewsLike.MemberNewsLike;
 import com.dongnering.memberNewsLike.MemberNewsLikeRepository;
 import com.dongnering.member.domain.Member;
 import com.dongnering.member.domain.repository.MemberRepository;
+import com.dongnering.news.api.dto.request.NewsLikeDisLikeDto;
 import com.dongnering.news.api.dto.request.NewsUpdateDtoDDDDDD;
 import com.dongnering.news.api.dto.response.NewsListDto;
 import com.dongnering.news.api.dto.response.NewsSingleByIdDto;
@@ -171,43 +172,40 @@ public class NewsService {
     }
 
 
-    //뉴스 좋아요
+    //뉴스 좋아요 통합
     @Transactional
-    public void newsLike(Principal principal, Long newsId) {
-        Long memberId = Long.parseLong(principal.getName());
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new IllegalStateException("해당 멤버가 없습니다. id=" + memberId));;
-        News news = newsRepository.findById(newsId).orElseThrow(()-> new IllegalStateException("해당 뉴스가 없습니다. id=" + newsId));
+    public boolean likeUnlikeNews(Principal principal, NewsLikeDisLikeDto newsLikeDisLikeDto){
+        Long newsId = newsLikeDisLikeDto.newsId();
+        Member member = findMemberByMemberId(principal);
+        News news = newsRepository.findById(newsId).orElseThrow(() -> new IllegalStateException("해당 뉴스를 찾을 수 없습니다 : " + newsId));
 
-        //한 뉴스에 한명의 사람만 좋아요 가능하게 확인하는 부분
-        boolean exists = memberNewsLikeRepository.existsByMemberAndNews(member, news);
-        if (exists) {
-            throw new IllegalStateException("이미 좋아요를 누른 뉴스입니다.");
+        MemberNewsLike memberNewsLike = memberNewsLikeRepository.findByMemberAndNews(member, news).orElse(null);
+
+        if (memberNewsLike == null){
+
+            memberNewsLike = new MemberNewsLike(member, news);
+            memberNewsLike.setLikeStatus(true);
+            memberNewsLikeRepository.save(memberNewsLike);
+
+            member.getNewsLikeList().add(memberNewsLike);
+            news.getMemberNewsLike().add(memberNewsLike);
+
+            news.setLikeCount(news.getLikeCount() + 1);
+            return true;
         }
 
-        MemberNewsLike memberNewsLike = new MemberNewsLike(member, news);
-        memberNewsLikeRepository.save(memberNewsLike);
-        member.getNewsLikeList().add(memberNewsLike);
-        news.getMemberNewsLike().add(memberNewsLike);
+        boolean newStatus = !memberNewsLike.isLikeStatus();
+        memberNewsLike.setLikeStatus(newStatus);
+        news.setLikeCount(news.getLikeCount() + (newStatus ? 1 : -1));
 
-        news.setLikeCount(news.getLikeCount() + 1);
+        return newStatus;
+
     }
 
 
-    //뉴스 좋아요 취소
-    @Transactional
-    public void unlikeNews(Principal principal, Long newsId) {
-        Long memberId = Long.parseLong(principal.getName());
-        Member member = memberRepository.findById(memberId).orElseThrow(()-> new IllegalStateException("해당 멤버가 없습니다. id=" + memberId));;
-        News news = newsRepository.findById(newsId).orElseThrow(()-> new IllegalStateException("해당 뉴스가 없습니다. id=" + newsId));
 
-        boolean exists = memberNewsLikeRepository.existsByMemberAndNews(member, news);
-        if (!exists) {
-            throw new IllegalStateException("좋아요 누른적 없음.");
-        }
 
-        news.setLikeCount(news.getLikeCount() - 1);
-        memberNewsLikeRepository.deleteByMemberAndNews(member, news);
-    }
+
 
     //뉴스 단건 삭제
     @Transactional

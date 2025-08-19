@@ -25,8 +25,15 @@ public class MemberArtLike {
     @JoinColumn(name = "art_id")
     private Art art;
 
+    private boolean likeStatus;
+
     public MemberArtLike(Member member, Art art) {
         this.member = member;
         this.art = art;
+        this.likeStatus = false;
+    }
+
+    public void setLikeStatus(boolean likeStatus) {
+        this.likeStatus = likeStatus;
     }
 }

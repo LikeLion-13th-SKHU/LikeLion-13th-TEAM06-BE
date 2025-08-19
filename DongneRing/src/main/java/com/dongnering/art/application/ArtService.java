@@ -1,6 +1,7 @@
 package com.dongnering.art.application;
 
 
+import com.dongnering.art.api.dto.ArtLikeDisLikeDto;
 import com.dongnering.art.api.dto.response.ArtListDto;
 import com.dongnering.art.api.dto.response.ArtSingleByIdDto;
 import com.dongnering.art.domain.Art;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.security.PublicKey;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,10 +39,11 @@ public class ArtService {
     public ArtSingleByIdDto artFindById(Principal principal, Long artId) {
         Member member = findMemberByMemberId(principal);
         Art art = artRepository.findById(artId).orElseThrow(()-> new IllegalStateException("해당 아트가 없습니다. id=" + artId));
-        List<Long> memberLikedArtIds = memberArtLikeRepository.findArtByMember(member);
+//        List<Long> memberLikedArtIds = memberArtLikeRepository.findArtByMember(member);
 
+        Optional<MemberArtLike> memberArtLike = memberArtLikeRepository.findByMemberAndArt(member, art);
+        boolean liked = memberArtLike.map(MemberArtLike::isLikeStatus).orElse(false);
 
-        boolean liked = memberLikedArtIds.contains(art.getArtId());
         return ArtSingleByIdDto.from(art, liked);
     }
 
@@ -72,27 +75,41 @@ public class ArtService {
         return pageLastLikeCommentConverter(artPage, likedArtIds);
     }
 
-    //아트 좋아요
+    //아트 좋아요, 싫어요 통합 -토글형
     @Transactional
-    public void likeArt (Principal principal, Long artId){
-
+    public boolean likeUnlikeArt(Principal principal, ArtLikeDisLikeDto artLikeDisLikeDto) {
+        Long artId = artLikeDisLikeDto.artId();
         Member member = findMemberByMemberId(principal);
-        Art art = artRepository.findById(artId).orElseThrow(()-> new IllegalStateException("해당 아트가 없습니다. id=" + artId));
+        Art art = artRepository.findById(artId).orElseThrow(() -> new IllegalStateException("해당 아트가 없습니다. id=" + artId));
 
-        boolean exists = memberArtLikeRepository.existsByMemberAndArt(member, art);
-        if (exists) {
-            throw new IllegalStateException("이미 좋아요를 누른 뉴스입니다.");
+        MemberArtLike memberArtLike = memberArtLikeRepository.findByMemberAndArt(member, art).orElse(null);
+
+        if (memberArtLike == null) {
+            // 처음 좋아요
+            memberArtLike = new MemberArtLike(member, art);
+            memberArtLike.setLikeStatus(true);
+            memberArtLikeRepository.save(memberArtLike);
+
+
+            member.getMemberArtLikes().add(memberArtLike);
+            art.getMemberArtLikes().add(memberArtLike);
+
+            art.setLikeCount(art.getLikeCount() + 1);
+            return true;
         }
 
-        MemberArtLike memberArtLike = new MemberArtLike(member, art);
-        memberArtLikeRepository.save(memberArtLike);
+        // 토글
+        boolean newStatus = !memberArtLike.isLikeStatus();
+        memberArtLike.setLikeStatus(newStatus);
+        art.setLikeCount(art.getLikeCount() + (newStatus ? 1 : -1));
 
-        member.getMemberArtLikes().add(memberArtLike);
-        art.getMemberArtLikes().add(memberArtLike);
-
-        art.setLikeCount(art.getLikeCount()+1);
-
+        return newStatus; // 최종 상태 반환
     }
+
+
+
+
+
 
     //아트 좋아요순 리스트 - 핫이슈 순
     public Page<ArtListDto> artLikeList(Principal principal, Pageable pageable){
@@ -101,22 +118,6 @@ public class ArtService {
         Page<Art> artList = artRepository.findAllByOrderByLikeCountDesc(pageable);
         return pageLastLikeCommentConverter(artList, likedArtIds);
     }
-
-    //아트 싫어요
-    @Transactional
-    public void unLikeArt (Principal principal, Long artId){
-
-        Member member = findMemberByMemberId(principal);
-        Art art = artRepository.findById(artId).orElseThrow(()-> new IllegalStateException("해당 아트가 없습니다. id=" + artId));
-        boolean exists = memberArtLikeRepository.existsByMemberAndArt(member, art);
-        if (!exists) {
-            throw new IllegalStateException("좋아요 누른적 없음.");
-        }
-
-        art.setLikeCount(art.getLikeCount() - 1);
-        memberArtLikeRepository.deleteByMemberAndArt(member, art);
-    }
-
 
 
     //좋아요한 아트들만 보여주기
@@ -136,7 +137,6 @@ public class ArtService {
     public void artAllDelete(){
         artRepository.deleteAll();
     }
-
 
 
 
