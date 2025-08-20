@@ -4,6 +4,7 @@ import com.dongnering.comment.newsComment.domain.NewsComment;
 import com.dongnering.member.domain.Member;
 import com.dongnering.news.domain.News;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -17,6 +18,9 @@ public interface NewsCommentRepository extends JpaRepository<NewsComment, Long> 
 
 
     Long countByNews(News news);
+
+
+
 }
 
 

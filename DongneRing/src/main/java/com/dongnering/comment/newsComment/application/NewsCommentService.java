@@ -69,16 +69,31 @@ public class NewsCommentService {
             throw new IllegalStateException("작성한 댓글이 없습니다.");
         }
 
-
     }
 
+
+
+
     //뉴스 댓글 반환
-    public List<NewsCommentResponseDto> findNewsComment(Long newsId){
+    public List<NewsCommentResponseDto> findNewsComment(Long newsId, Principal principal){
+        Long memberId = Long.parseLong(principal.getName());
+        Member member = memberRepository.findById(memberId).orElseThrow(()-> new IllegalStateException("해당 멤버가 없습니다. id=" + memberId));;
+
+
 
         News news = newsRepository.findById(newsId).orElseThrow(IllegalArgumentException::new);
         List<NewsComment> newsCommentList = newsCommentRepository.findAllByNews(news);
 
-        return newsCommentList.stream().map(NewsCommentResponseDto::from).toList();
+
+        return newsCommentList.stream()
+                .map(newsComment ->
+                        NewsCommentResponseDto.from(
+                                newsComment,
+                                newsComment.getMember().getMemberId().equals(member.getMemberId())
+                        )
+                )
+                .toList();
+
 
     }
 

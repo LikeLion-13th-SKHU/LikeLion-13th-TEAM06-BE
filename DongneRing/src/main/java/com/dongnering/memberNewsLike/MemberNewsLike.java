@@ -28,9 +28,17 @@ public class MemberNewsLike {
     @JoinColumn(name = "news_id")
     private News news;
 
+    private boolean likeStatus;
+
     @Builder
     public MemberNewsLike(Member member, News news) {
         this.member = member;
         this.news = news;
+        likeStatus = false;
+    }
+
+
+    public void setLikeStatus(boolean likeStatus) {
+        this.likeStatus = likeStatus;
     }
 }

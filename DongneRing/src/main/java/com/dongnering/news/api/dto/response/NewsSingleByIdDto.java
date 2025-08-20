@@ -2,6 +2,7 @@ package com.dongnering.news.api.dto.response;
 
 
 import com.dongnering.comment.newsComment.api.dto.response.NewsCommentResponseDto;
+import com.dongnering.interest.domain.InterestType;
 import com.dongnering.news.domain.News;
 import lombok.Builder;
 
@@ -14,6 +15,8 @@ public record NewsSingleByIdDto(
         String title,
 
         String content,
+
+        List<InterestType> interestTypes,
 
         String newsDate,
 
@@ -30,12 +33,13 @@ public record NewsSingleByIdDto(
 
 ) {
 
-    public static NewsSingleByIdDto from(News news, boolean liked, List<NewsCommentResponseDto> newsComment){
+    public static NewsSingleByIdDto from(News news, boolean liked, List<NewsCommentResponseDto> newsComment, List<InterestType> interestTypes){
         return NewsSingleByIdDto.builder()
                 .newsId(news.getNewsId())
                 .title(news.getTitle())
                 .summary(news.getNewsSummary())
                 .content(news.getContent())
+                .interestTypes(interestTypes)
                 .newsDate(news.getNewsdate())
                 .imgUrl(news.getImgUrl())
                 .likeCount(news.getLikeCount())
