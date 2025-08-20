@@ -17,6 +17,7 @@ public enum SuccessCode {
     COMMENT_DELETE_SUCCESS(HttpStatus.OK, "댓글이 성공적으로 삭제되었습니다."),
     BOOKMARK_DELETE_SUCCESS(HttpStatus.OK,"스크랩이 성공적으로 삭제되었습니다."),
     BOOKMARK_COUNT_SUCCESS(HttpStatus.OK, "스크랩 개수 조회에 성공했습니다."),
+    UPDATE_SUCCESS(HttpStatus.OK, "성공적으로 수정되었습니다."),
 
     // 201 CREATED
     EMAIL_SEND_SUCCESS(HttpStatus.CREATED, "이메일 전송에 성공하였습니다."),
@@ -26,6 +27,7 @@ public enum SuccessCode {
     LIKE_SAVE_SUCCESS(HttpStatus.CREATED, "좋아요가 성공적으로 등록되었습니다."),
     COMMENT_SAVE_SUCCESS(HttpStatus.CREATED, "댓글이 성공적으로 등록되었습니다."),
     BOOKMARK_SAVE_SUCCESS(HttpStatus.CREATED,"북마크가 성공적으로 등록되었습니다."),
+    SAVE_SUCCESS(HttpStatus.CREATED, "성공적으로 저장되었습니다."),
 
 
 

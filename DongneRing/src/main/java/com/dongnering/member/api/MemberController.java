@@ -1,13 +1,15 @@
 package com.dongnering.member.api;
 
+import com.dongnering.common.error.SuccessCode;
+import com.dongnering.common.template.ApiResTemplate;
 import com.dongnering.member.api.dto.request.MemberSaveReqDto;
 import com.dongnering.member.api.dto.request.MemberUpdateReqDto;
 import com.dongnering.member.api.dto.response.MemberInfoResDto;
 import com.dongnering.member.application.MemberService;
-import com.dongnering.member.domain.Member;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,24 +18,32 @@ public class MemberController {
 
     private final MemberService memberService;
 
-   //프로필 조회
+    //마이페이지 조회
     @GetMapping("/info")
-    public MemberInfoResDto getProfile(@AuthenticationPrincipal(expression = "member") Member member) {
-        // Principal에서 바로 Member 객체를 가져와 memberId 사용
-        return memberService.getProfile(member.getMemberId());
+    public ApiResTemplate<MemberInfoResDto> getProfile(Principal principal) {
+        return ApiResTemplate.successResponse(
+                SuccessCode.GET_SUCCESS,
+                memberService.getProfile(principal)
+        );
     }
 
-    //최초 개인화 정보 저장
+    //최초 개인화 저장
     @PostMapping("/info")
-    public void saveProfile(@AuthenticationPrincipal(expression = "member") Member member,
-                            @RequestBody MemberSaveReqDto reqDto) {
-        memberService.saveProfile(member.getMemberId(), reqDto);
+    public ApiResTemplate<Void> saveProfile(
+            Principal principal,
+            @RequestBody MemberSaveReqDto reqDto
+    ) {
+        memberService.saveProfile(principal, reqDto);
+        return ApiResTemplate.successResponse(SuccessCode.MEMBER_FIRST_UPDATE_SUCCESS, null);
     }
 
     //프로필 수정
     @PutMapping("/info")
-    public void updateProfile(@AuthenticationPrincipal(expression = "member") Member member,
-                              @RequestBody MemberUpdateReqDto reqDto) {
-        memberService.updateProfile(member.getMemberId(), reqDto);
+    public ApiResTemplate<Void> updateProfile(
+            Principal principal,
+            @RequestBody MemberUpdateReqDto reqDto
+    ) {
+        memberService.updateProfile(principal, reqDto);
+        return ApiResTemplate.successResponse(SuccessCode.UPDATE_SUCCESS, null);
     }
 }

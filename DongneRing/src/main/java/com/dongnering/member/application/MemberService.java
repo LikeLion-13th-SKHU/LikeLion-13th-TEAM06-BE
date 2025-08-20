@@ -14,9 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
-
+//커밋용
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -25,37 +26,42 @@ public class MemberService {
     private final InterestRepository interestRepository;
     private final MemberInterestRepository memberInterestRepository;
 
+    //공통적으로 Member 조회 메서드
+    private Member getMemberByPrincipal(Principal principal) {
+        String email = principal.getName(); // 토큰에서 이메일 추출
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    }
+
     //프로필 조회
     @Transactional(readOnly = true)
-    public MemberInfoResDto getProfile(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public MemberInfoResDto getProfile(Principal principal) {
+        Member member = getMemberByPrincipal(principal);
 
         List<String> interests = member.getMemberInterests()
                 .stream()
                 .map(mi -> mi.getInterest().getInterestType().name())
                 .collect(Collectors.toList());
 
-        return MemberInfoResDto.builder()
-                .nickname(member.getNickname())
-                .age(member.getAge())
-                .location(member.getLocation())
-                .interests(interests)
-                .profileCompleted(member.getProfileCompleted())
-                .build();
+        return MemberInfoResDto.of(
+                member.getNickname(),
+                member.getAge(),
+                member.getLocation(),
+                member.getMemberPictureUrl(),
+                interests,
+                member.getProfileCompleted()
+        );
     }
 
-
-    // 최초 개인화 저장
+    //최초 개인화 저장
     @Transactional
-    public void saveProfile(Long memberId, MemberSaveReqDto reqDto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public void saveProfile(Principal principal, MemberSaveReqDto reqDto) {
+        Member member = getMemberByPrincipal(principal);
 
-        member.updateProfile(reqDto.getNickname(), reqDto.getAge(), reqDto.getLocation());
+        member.updateProfile(reqDto.nickname(), reqDto.age(), reqDto.location());
 
-        // 관심사 저장
-        for (InterestType interestType : reqDto.getInterests()) {
+        //관심사 저장
+        for (InterestType interestType : reqDto.interests()) {
             Interest interest = interestRepository.findByInterestType(interestType);
             MemberInterest memberInterest = MemberInterest.builder()
                     .member(member)
@@ -64,23 +70,23 @@ public class MemberService {
             memberInterestRepository.save(memberInterest);
         }
 
-        // 최초 개인화 완료 처리
+        //최초 개인화 완료 처리
         member.completeProfile();
     }
 
-    // 프로필 수정
+    //프로필 수정
     @Transactional
-    public void updateProfile(Long memberId, MemberUpdateReqDto reqDto) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+    public void updateProfile(Principal principal, MemberUpdateReqDto reqDto) {
+        Member member = getMemberByPrincipal(principal);
 
-        member.updateProfile(reqDto.getNickname(), reqDto.getAge(), reqDto.getLocation());
+        member.updateProfile(reqDto.nickname(), reqDto.age(), reqDto.location());
 
-        // 기존 관심사 제거
+        //기존 관심사 제거
+        memberInterestRepository.deleteAll(member.getMemberInterests());
         member.getMemberInterests().clear();
 
-        // 새로운 관심사 저장
-        for (InterestType interestType : reqDto.getInterests()) {
+        //새로운 관심사 저장
+        for (InterestType interestType : reqDto.interests()) {
             Interest interest = interestRepository.findByInterestType(interestType);
             MemberInterest memberInterest = MemberInterest.builder()
                     .member(member)
@@ -89,5 +95,4 @@ public class MemberService {
             memberInterestRepository.save(memberInterest);
         }
     }
-
 }
