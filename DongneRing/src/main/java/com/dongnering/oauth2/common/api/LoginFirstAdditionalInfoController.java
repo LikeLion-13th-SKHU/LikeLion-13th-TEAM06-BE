@@ -23,7 +23,7 @@ public class LoginFirstAdditionalInfoController {
 
 
     @PostMapping("/loginFirst")
-    @Operation(summary = "최초 로그인 후 추가정보(나이, 관심사, 지역 추가하는 url", description = "최초 로그인 후 추가정보(나이, 관심사, 지역 추가하는 url")
+    @Operation(summary = "이거 사용하지 마시오 -> 위에 멤버 컨트롤러사용", description = "이거 사용하지 마시오")
     public ApiResTemplate<String> firstLoginAdditionalInfoAdd(@RequestBody LoginFirstAdditionalInfoRequestDto loginFirstAdditionalInfoRequestDto, Principal principal){
         loginFirstAdditionalInfoService.loginFirstAdditionalInfo(loginFirstAdditionalInfoRequestDto, principal);
         return ApiResTemplate.successWithNoContent(SuccessCode.MEMBER_FIRST_UPDATE_SUCCESS);
