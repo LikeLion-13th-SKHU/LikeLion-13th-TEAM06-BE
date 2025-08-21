@@ -12,6 +12,7 @@ import com.dongnering.memberNewsLike.MemberNewsLike;
 import com.dongnering.memberNewsLike.MemberNewsLikeRepository;
 import com.dongnering.member.domain.Member;
 import com.dongnering.member.domain.repository.MemberRepository;
+import com.dongnering.news.api.dto.converter.NewsAiToServerDto;
 import com.dongnering.news.api.dto.request.NewsLikeDisLikeDto;
 import com.dongnering.news.api.dto.request.NewsUpdateDtoDDDDDD;
 import com.dongnering.news.api.dto.response.NewsListDto;
@@ -283,7 +284,7 @@ public class NewsService {
         for (String s : newsUpdateDtoDDDDDD.category()) {
 
             InterestType interestType = InterestType.valueOf(s);
-            Interest interest = interestRepository.findByInterestType(interestType);
+            Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;
 
             NewsInterest newsInterest = NewsInterest.builder()
                     .news(news)
@@ -300,6 +301,37 @@ public class NewsService {
        news.getNewsTags().addAll(newsUpdateDtoDDDDDD.tag());
 
        news.setLocation(newsUpdateDtoDDDDDD.location());
+
+
+    }
+
+
+    //------ai 연결 후 뉴스 테이블 수정할떄사용
+    @Transactional
+    public void newsUpdateAiConnectAfter(NewsAiToServerDto newsAiToServerDto){
+
+        News news = newsRepository.findByNewsIdentifyId(newsAiToServerDto.newsIdentifyId()).orElseThrow(()->new IllegalStateException("해당 뉴스없음"));
+
+
+        for (InterestType interestType  : newsAiToServerDto.category()) {
+
+            Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;
+
+            NewsInterest newsInterest = NewsInterest.builder()
+                    .news(news)
+                    .interest(interest)
+                    .build();
+
+            newsInterestRepository.save(newsInterest);
+            news.getNewsInterest().add(newsInterest);
+        }
+
+
+        news.getNewsSummary().addAll(newsAiToServerDto.summary());
+
+        news.getNewsTags().addAll(newsAiToServerDto.tag());
+
+        news.setLocation(newsAiToServerDto.location());
 
 
     }

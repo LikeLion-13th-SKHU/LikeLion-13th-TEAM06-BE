@@ -6,18 +6,20 @@ import com.dongnering.news.api.dto.converter.NewsAiToServerDto;
 import com.dongnering.news.api.dto.converter.NewsOpenApiToServerDto;
 import com.dongnering.news.application.NewsService;
 import com.dongnering.news.domain.repository.NewsRepository;
+import com.dongnering.newsInterest.domain.repository.NewsInterestRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -37,57 +39,63 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Component
+@Configuration
 @RequiredArgsConstructor
-public class EveryDayNewsUpdate {
+public class NewsInitializerWithAiServer {
+
 
     private final NewsRepository newsRepository;
     private final NewsService newsService;
 
+
+
     @Value("${serviceKey.openApi.news-secret}")
     private String OPENAPI_NEWS_SECRET;
 
-    @Scheduled(cron = "0 0 7-22/3 * * *")// 오전 7시부터 오후10시까지 3시간마다
-    public void runScheduledJob() {
+    @Bean
+    public CommandLineRunner initNews() {
+        return args -> {
+
+            //xml UTF_8 인코딩
+            RestTemplate restTemplate = new RestTemplate();
+            restTemplate.getMessageConverters()
+                    .removeIf(c -> c instanceof org.springframework.http.converter.StringHttpMessageConverter);
+            restTemplate.getMessageConverters()
+                    .add(1, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+            LocalDate startDate = LocalDate.now().minusMonths(1); // 한 달 전
+//            LocalDate startDate = LocalDate.now().minusWeeks(1); // 일주전 시작일
+//            LocalDate startDate = LocalDate.now().minusDays(3); // 일주전 시작일
 
 
 
-        //xml UTF_8 인코딩
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getMessageConverters()
-                .removeIf(c -> c instanceof org.springframework.http.converter.StringHttpMessageConverter);
-        restTemplate.getMessageConverters()
-                .add(1, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
+            LocalDate endDate = LocalDate.now();                   // 오늘
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate startDate = LocalDate.now();
-        LocalDate endDate = LocalDate.now();                   // 오늘
+            List<NewsOpenApiToServerDto> sixDayList = new ArrayList<>();
+            LocalDate currentStartDate = startDate;
 
-        List<NewsOpenApiToServerDto> sixDayList = new ArrayList<>();
-        LocalDate currentStartDate = startDate;
+            while (!currentStartDate.isAfter(endDate)) {
+                LocalDate currentEndDate = currentStartDate.plusDays(2); // 3일 단위
+                if (currentEndDate.isAfter(endDate)) currentEndDate = endDate;
 
-        while (!currentStartDate.isAfter(endDate)) {
-            LocalDate currentEndDate = currentStartDate.plusDays(2); // 3일 단위
-            if (currentEndDate.isAfter(endDate)) currentEndDate = endDate;
+                String start = currentStartDate.format(formatter);
+                String end = currentEndDate.format(formatter);
 
-            String start = currentStartDate.format(formatter);
-            String end = currentEndDate.format(formatter);
+                // 3일 단위 뉴스 가져오기
+                List<NewsOpenApiToServerDto> threeDayNews = fetchNewsFromApi(start, end, restTemplate);
+                sixDayList.addAll(threeDayNews);
 
-            // 3일 단위 뉴스 가져오기
-            List<NewsOpenApiToServerDto> threeDayNews = fetchNewsFromApi(start, end, restTemplate);
-            sixDayList.addAll(threeDayNews);
+                // 6일 단위로 POST
+                long daysSinceStart = ChronoUnit.DAYS.between(startDate, currentEndDate) + 1;
+                if (daysSinceStart % 6 == 0 || currentEndDate.equals(endDate)) {
+                    postSixDayList(sixDayList);
+                    sixDayList.clear();
+                }
 
-            // 6일 단위로 POST
-            long daysSinceStart = ChronoUnit.DAYS.between(startDate, currentEndDate) + 1;
-            if (daysSinceStart % 6 == 0 || currentEndDate.equals(endDate)) {
-                postSixDayList(sixDayList);
-                sixDayList.clear();
+                currentStartDate = currentEndDate.plusDays(1); // 다음 3일 구간
             }
-
-            currentStartDate = currentEndDate.plusDays(1); // 다음 3일 구간
-        }
-
+        };
     }
 
     private List<NewsOpenApiToServerDto> fetchNewsFromApi(String start, String end, RestTemplate restTemplate) {
@@ -272,9 +280,7 @@ public class EveryDayNewsUpdate {
 
 
 
-
-
-
-
-
 }
+
+
+

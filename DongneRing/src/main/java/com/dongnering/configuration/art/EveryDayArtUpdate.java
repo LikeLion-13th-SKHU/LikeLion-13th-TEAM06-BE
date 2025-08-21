@@ -32,7 +32,7 @@ public class EveryDayArtUpdate {
     @Value("${serviceKey.openApi.art-secret}")
     private String OPENAPI_ART_SECRET;
 
-    @Scheduled(cron = "0 0 8 * * *") // 매일 오전 8시 실행
+    @Scheduled(cron = "0 0 8,15 * * *") // 매일 오전 8시, 오후 3시 실행
     public void runScheduledJob() {
 
         //xml utf-8인코딩 설정

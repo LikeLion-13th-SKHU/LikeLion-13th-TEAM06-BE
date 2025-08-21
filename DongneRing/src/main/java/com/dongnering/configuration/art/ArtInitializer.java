@@ -53,7 +53,7 @@ public class ArtInitializer {
 
 
             //예술 조회 개수 -> 1000개로 갈듯
-            String searchContentNumber = "30";
+            String searchContentNumber = "100";
 
             try {
 

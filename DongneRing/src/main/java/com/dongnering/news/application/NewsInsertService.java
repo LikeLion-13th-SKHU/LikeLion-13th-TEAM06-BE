@@ -41,7 +41,7 @@ public class NewsInsertService {
 
             if (interestRepository.existsByInterestType(interestType)){
 
-                Interest interest = interestRepository.findByInterestType(interestType);
+                Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));
 
                 NewsInterest newsInterest = new NewsInterest(news, interest);
                 newsInterestRepository.save(newsInterest);
