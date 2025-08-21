@@ -1,5 +1,7 @@
 package com.dongnering.member.application;
 
+import com.dongnering.common.error.ErrorCode;
+import com.dongnering.common.exception.BusinessException;
 import com.dongnering.interest.domain.Interest;
 import com.dongnering.interest.domain.InterestType;
 import com.dongnering.interest.domain.repository.InterestRepository;
@@ -28,10 +30,14 @@ public class MemberService {
 
     //공통적으로 Member 조회 메서드
     private Member getMemberByPrincipal(Principal principal) {
-        String email = principal.getName(); // 토큰에서 이메일 추출
-        return memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        Long memberId = Long.parseLong(principal.getName()); // 토큰에서 memberId 추출
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.MEMBER_NOT_FOUND,
+                        ErrorCode.MEMBER_NOT_FOUND.getMessage()
+                ));
     }
+
 
     //프로필 조회
     @Transactional(readOnly = true)
