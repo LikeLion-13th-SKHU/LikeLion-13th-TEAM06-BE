@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -53,6 +54,7 @@ public class NewsInitializerWithAiServer {
     private String OPENAPI_NEWS_SECRET;
 
     @Bean
+    @Order(2)
     public CommandLineRunner initNews() {
         return args -> {
 

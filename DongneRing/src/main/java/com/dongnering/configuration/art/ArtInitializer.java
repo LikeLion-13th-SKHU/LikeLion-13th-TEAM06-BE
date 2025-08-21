@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,6 +37,7 @@ public class ArtInitializer {
     private String OPENAPI_ART_SECRET;
 
     @Bean
+    @Order(3)
     public CommandLineRunner initArt(){
 
 
