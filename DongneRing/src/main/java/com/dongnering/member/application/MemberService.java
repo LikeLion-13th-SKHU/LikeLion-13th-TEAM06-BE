@@ -64,7 +64,7 @@ public class MemberService {
     public void saveProfile(Principal principal, MemberSaveReqDto reqDto) {
         Member member = getMemberByPrincipal(principal);
 
-        member.updateProfile(reqDto.nickname(), reqDto.age(), reqDto.location());
+        member.saveProfile(reqDto.age(), reqDto.location());
 
         //관심사 저장
         for (InterestType interestType : reqDto.interests()) {
