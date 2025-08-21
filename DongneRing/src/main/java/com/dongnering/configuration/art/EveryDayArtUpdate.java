@@ -20,6 +20,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 //매일 9:00 최신 예술 100개 조회 -> 이전에 등록된 정보는 저장 x
 
@@ -32,7 +34,7 @@ public class EveryDayArtUpdate {
     @Value("${serviceKey.openApi.art-secret}")
     private String OPENAPI_ART_SECRET;
 
-    @Scheduled(cron = "0 0 8,15 * * *") // 매일 오전 8시, 오후 3시 실행
+    @Scheduled(cron = "0 0 7-19/3 * * *") //오전 7 - 오후7시까지 3시간마다
     public void runScheduledJob() {
 
         //xml utf-8인코딩 설정
@@ -44,7 +46,7 @@ public class EveryDayArtUpdate {
 
 
 
-        String searchContentNumber = "50";
+        String searchContentNumber = "20";
 
         try {
 
@@ -72,8 +74,19 @@ public class EveryDayArtUpdate {
                 Long identifyId = Long.valueOf(identifyStr);
 
                 String title = xpath.evaluate("title", item).trim();
-                String startDate = xpath.evaluate("startDate", item).trim();
-                String endDate = xpath.evaluate("endDate", item).trim();
+
+                String startDateBefore = xpath.evaluate("startDate", item).trim();
+
+
+                String startDate = dateChange(startDateBefore);
+
+                String endDateBefore = xpath.evaluate("endDate", item).trim();
+
+                String endDate = dateChange(endDateBefore);
+
+
+
+
                 String location = xpath.evaluate("place", item).trim();
                 String area = xpath.evaluate("area", item).trim();
                 String imgUrl = xpath.evaluate("thumbnail", item).trim();
@@ -90,6 +103,7 @@ public class EveryDayArtUpdate {
                             .location(artOpenApiToServer.place())
                             .area(artOpenApiToServer.area())
                             .imageUrl(artOpenApiToServer.imageUrl())
+                            .likeCount(0L)
                             .build();
 
 
@@ -98,13 +112,25 @@ public class EveryDayArtUpdate {
                 }
 
 
+
             } } catch (Exception e) {
-            System.err.println("art 8시 업데이트 오류 발생 : " + e.getMessage());
+            System.err.println("art 초기 업데이트 오류 발생 : " + e.getMessage());
         }
 
 
 
+    }
 
+    private String dateChange(String startDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        LocalDate date = LocalDate.parse(startDate, inputFormatter);
+        String formatted = date.format(outputFormatter);
+
+        System.out.println("test : " + formatted);
+
+        return formatted;
     }
 
 

@@ -53,7 +53,7 @@ public class ArtInitializer {
 
 
             //예술 조회 개수 -> 1000개로 갈듯
-            String searchContentNumber = "100";
+            String searchContentNumber = "1000";
 
             try {
 
@@ -124,7 +124,7 @@ public class ArtInitializer {
                 System.err.println("art 초기 업데이트 오류 발생 : " + e.getMessage());
             }
 
-
+            System.out.println("초기 아트 데이터 세팅 완료");
         };
 
 

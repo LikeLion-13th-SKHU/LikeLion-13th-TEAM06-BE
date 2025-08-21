@@ -64,13 +64,10 @@ public class NewsInitializerWithAiServer {
                     .add(1, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            LocalDate startDate = LocalDate.now().minusMonths(1); // 한 달 전
-//            LocalDate startDate = LocalDate.now().minusWeeks(1); // 일주전 시작일
-//            LocalDate startDate = LocalDate.now().minusDays(3); // 일주전 시작일
+            LocalDate startDate = LocalDate.now().minusMonths(3); // 세 달 전
 
 
-
-            LocalDate endDate = LocalDate.now();                   // 오늘
+            LocalDate endDate = LocalDate.now();            // 오늘
 
             List<NewsOpenApiToServerDto> sixDayList = new ArrayList<>();
             LocalDate currentStartDate = startDate;
@@ -95,6 +92,8 @@ public class NewsInitializerWithAiServer {
 
                 currentStartDate = currentEndDate.plusDays(1); // 다음 3일 구간
             }
+
+            System.out.println("초기 뉴스 데이터 세팅 완료");
         };
     }
 
@@ -148,8 +147,8 @@ public class NewsInitializerWithAiServer {
             ObjectMapper objectMapper = new ObjectMapper();
 
             String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list);
-            System.out.println("POST로 보낼 JSON (6일 단위):");
-            System.out.println(jsonString);
+//            System.out.println("POST로 보낼 JSON (6일 단위):");
+//            System.out.println(jsonString);
 
             // 실제 POST 전송 시
             HttpHeaders headers = new HttpHeaders();

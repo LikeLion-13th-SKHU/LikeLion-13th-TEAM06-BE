@@ -48,12 +48,10 @@ public class EveryDayNewsUpdate {
     @Value("${serviceKey.openApi.news-secret}")
     private String OPENAPI_NEWS_SECRET;
 
-    @Scheduled(cron = "0 0 7-22/3 * * *")// 오전 7시부터 오후10시까지 3시간마다
+    @Scheduled(cron = "0 0 7-19/3 * * *") //오전 7 - 오후7시까지 3시간마다
     public void runScheduledJob() {
+        System.out.println("3시 뉴스 실행");
 
-
-
-        //xml UTF_8 인코딩
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters()
                 .removeIf(c -> c instanceof org.springframework.http.converter.StringHttpMessageConverter);
@@ -61,33 +59,27 @@ public class EveryDayNewsUpdate {
                 .add(1, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-        LocalDate startDate = LocalDate.now();
-        LocalDate endDate = LocalDate.now();                   // 오늘
+        String today = LocalDate.now().format(formatter);
 
-        List<NewsOpenApiToServerDto> sixDayList = new ArrayList<>();
-        LocalDate currentStartDate = startDate;
+        // 1. 오늘 뉴스 가져오기
+        List<NewsOpenApiToServerDto> newsList = fetchNewsFromApi(today, today, restTemplate);
 
-        while (!currentStartDate.isAfter(endDate)) {
-            LocalDate currentEndDate = currentStartDate.plusDays(2); // 3일 단위
-            if (currentEndDate.isAfter(endDate)) currentEndDate = endDate;
-
-            String start = currentStartDate.format(formatter);
-            String end = currentEndDate.format(formatter);
-
-            // 3일 단위 뉴스 가져오기
-            List<NewsOpenApiToServerDto> threeDayNews = fetchNewsFromApi(start, end, restTemplate);
-            sixDayList.addAll(threeDayNews);
-
-            // 6일 단위로 POST
-            long daysSinceStart = ChronoUnit.DAYS.between(startDate, currentEndDate) + 1;
-            if (daysSinceStart % 6 == 0 || currentEndDate.equals(endDate)) {
-                postSixDayList(sixDayList);
-                sixDayList.clear();
+        // 2. DB 저장
+        newsList.forEach(news -> {
+            if (!newsRepository.existsByNewsIdentifyId(Long.valueOf(news.newsIdentifyId()))) {
+                newsService.newFirstSave(
+                        Long.valueOf(news.newsIdentifyId()),
+                        news.title(),
+                        news.pictureUrl(),
+                        news.contents(),
+                        LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+                );
             }
+        });
 
-            currentStartDate = currentEndDate.plusDays(1); // 다음 3일 구간
-        }
-
+        // 3. 바로 POST
+        postNewsList(newsList);
+        System.out.println("스케줄러 실행 완료!");
     }
 
     private List<NewsOpenApiToServerDto> fetchNewsFromApi(String start, String end, RestTemplate restTemplate) {
@@ -107,24 +99,14 @@ public class EveryDayNewsUpdate {
             XPath xpath = XPathFactory.newInstance().newXPath();
             NodeList newsItems = (NodeList) xpath.evaluate("/response/body/NewsItem", doc, XPathConstants.NODESET);
 
-            for (int i = newsItems.getLength() - 1; i >= 0; i--) {
+            for (int i = 0; i < newsItems.getLength(); i++) {
                 Node item = newsItems.item(i);
-                String newsIdentifyIdStr = xpath.evaluate("NewsItemId", item).trim();
-                Long newsIdentifyId = Long.valueOf(newsIdentifyIdStr);
-
-                if (newsRepository.existsByNewsIdentifyId(newsIdentifyId)) continue;
-
+                String newsId = xpath.evaluate("NewsItemId", item).trim();
                 String title = xpath.evaluate("Title", item).trim();
-                String imageUrl = xpath.evaluate("OriginalimgUrl", item).trim();
                 String content = cdataConverter(xpath.evaluate("DataContents", item).trim());
+                String imageUrl = xpath.evaluate("OriginalimgUrl", item).trim();
 
-                String newDate = xpath.evaluate("ApproveDate", item).trim();
-                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
-                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-                String formattedDate = LocalDateTime.parse(newDate, inputFormatter).format(outputFormatter);
-
-                newsService.newFirstSave(newsIdentifyId, title, imageUrl, content, formattedDate);
-                newsList.add(new NewsOpenApiToServerDto(newsIdentifyId.toString(), title, content,imageUrl));
+                newsList.add(new NewsOpenApiToServerDto(newsId, title, content, imageUrl));
             }
         } catch (Exception e) {
             System.err.println("뉴스 가져오기 오류 [" + start + " ~ " + end + "]: " + e.getMessage());
@@ -132,7 +114,7 @@ public class EveryDayNewsUpdate {
         return newsList;
     }
 
-    private void postSixDayList(List<NewsOpenApiToServerDto> list) {
+    private void postNewsList(List<NewsOpenApiToServerDto> list) {
         String postUrl = "http://youhayeong.shop/run/json";
 
         try {
@@ -269,12 +251,4 @@ public class EveryDayNewsUpdate {
         htmlContent = htmlContent.replaceAll("(?i)\\sstyle\\s*=\\s*\"[^\"]*\"", "");
         return Jsoup.clean(htmlContent, Safelist.basicWithImages());
     }
-
-
-
-
-
-
-
-
 }
