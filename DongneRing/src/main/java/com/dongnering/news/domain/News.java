@@ -37,7 +37,7 @@ public class News {
     //뉴스 요약
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "news_summary_list", joinColumns = @JoinColumn(name = "news_id"))
-    @Column(name = "news_summary_text")
+    @Column(name = "news_summary_text",  columnDefinition = "TEXT")
     private List<String> newsSummary = new ArrayList<>();
 
     //카테고리

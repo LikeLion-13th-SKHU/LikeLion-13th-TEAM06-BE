@@ -30,7 +30,10 @@ public class OauthService {
         member.saveRefreshToken(refreshToken);
         memberRepository.save(member);
 
-        TokenResDto tokenResDto = new TokenResDto(accessToken, refreshToken);
+        // 개인화 여부 응답에 추가
+        Boolean profileCompleted = member.getProfileCompleted();
+
+        TokenResDto tokenResDto = new TokenResDto(accessToken, refreshToken, profileCompleted);
 
         return ResponseEntity.ok()
                 .body(ApiResTemplate.successResponse(SuccessCode.LOGIN_SUCCESS, tokenResDto));

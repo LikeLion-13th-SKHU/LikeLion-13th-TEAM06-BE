@@ -7,6 +7,7 @@ import com.dongnering.interest.domain.repository.InterestRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 
 
 //    "정책_정부", "산업_기업", "연구_기술", "규제_제도",
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 public class InterestInitializer {
 
     @Bean
+    @Order(1)
     public CommandLineRunner initInterestData(InterestRepository interestRepository)
     {return args -> {
 
