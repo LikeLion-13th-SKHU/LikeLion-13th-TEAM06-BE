@@ -66,7 +66,8 @@ public class NewsInitializerWithAiServer {
                     .add(1, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
-            LocalDate startDate = LocalDate.now().minusMonths(3); // 세 달 전
+//            LocalDate startDate = LocalDate.now().minusMonths(3); // 세 달 전 --> 최종 코드는 이걸로
+            LocalDate startDate = LocalDate.now().minusWeeks(1);
 
 
             LocalDate endDate = LocalDate.now();            // 오늘
