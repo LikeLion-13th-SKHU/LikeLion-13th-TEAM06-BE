@@ -99,6 +99,12 @@ public class Member {
         if (location != null) this.location = location;
     }
 
+    // 개인화 저장용 메서드
+    public void saveProfile(Long age, String location) {
+        if (age != null) this.age = age;
+        if (location != null) this.location = location;
+    }
+
     // 개인화 완료 처리 메서드
     public void completeProfile() {
         this.profileCompleted = true;
