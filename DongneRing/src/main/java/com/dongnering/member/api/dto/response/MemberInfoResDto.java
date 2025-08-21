@@ -1,17 +1,21 @@
 package com.dongnering.member.api.dto.response;
 
-import com.dongnering.member.domain.Member;
+import lombok.Builder;
 
+import java.util.List;
+
+@Builder
 public record MemberInfoResDto(
-        String email,
-        String name,
-        String token
+        String nickname,
+        Long age,
+        String location,
+        String memberPictureUrl,
+        List<String> interests,
+        boolean profileCompleted
 ) {
-    public static MemberInfoResDto of(Member member, String token) {
-        return new MemberInfoResDto(
-                member.getEmail(),
-                member.getNickname(),
-                token
-        );
+    //정적 팩토리 메서드
+    public static MemberInfoResDto of(String nickname, Long age, String location,
+                                      String memberPictureUrl, List<String> interests, boolean profileCompleted) {
+        return new MemberInfoResDto(nickname, age, location, memberPictureUrl, interests, profileCompleted);
     }
 }
