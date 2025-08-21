@@ -16,8 +16,8 @@ services:
       - ai-service
 
   ai-service:
-    image: hyunrnin/hackathon-ai:1.0.0
-    container_name: ai-service
+    image: ${DOCKERHUB_AI_USERNAME}/${DOCKER_AI_IMAGE}
+    container_name: ${DOCKER_AI_CONTAINER}
     restart: always
-    expose:
-      - "8000"
+    ports:
+      - "127.0.0.1:8000:8000"
