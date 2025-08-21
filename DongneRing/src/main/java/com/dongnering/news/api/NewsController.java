@@ -3,6 +3,7 @@ package com.dongnering.news.api;
 
 import com.dongnering.common.error.SuccessCode;
 import com.dongnering.common.template.ApiResTemplate;
+import com.dongnering.news.api.dto.request.NewsLikeDisLikeDto;
 import com.dongnering.news.api.dto.request.NewsUpdateDtoDDDDDD;
 import com.dongnering.news.api.dto.response.NewsListDto;
 import com.dongnering.news.api.dto.response.NewsSingleByIdDto;
@@ -51,22 +52,17 @@ public class NewsController {
         return ApiResTemplate.successResponse(SuccessCode.NEWS_GET_SUCCESS, newsList);
     }
 
-    //뉴스 좋아요
-    @GetMapping("like/{newsId}")
-    @Operation(summary = "뉴스 좋아요 ", description = "뉴스 좋아요, 뉴스Id사용")
-    public ApiResTemplate<String> newsLike(Principal principal, @PathVariable Long newsId){
-        newsService.newsLike(principal, newsId);
-        return ApiResTemplate.successWithNoContent(SuccessCode.LIKE_SUCCESS);
-    }
 
-    //뉴스 싫어요
-    @DeleteMapping("like/{newsId}")
-    @Operation(summary = "뉴스 싫어요", description = "뉴스 싫어요")
-    public ApiResTemplate<String> newsUnLike(Principal principal, @PathVariable Long newsId){
-        newsService.unlikeNews(principal, newsId);
-        return ApiResTemplate.successWithNoContent(SuccessCode.UNLIKE_SUCCESS);
+    //뉴스 좋아요 통합
+    @PostMapping("/like")
+    @Operation(summary = "뉴스 좋아요 통합(토글식)", description = "뉴스 좋아요 통합(토글식)")
+    public ApiResTemplate<Boolean> newsLikeUnLike(@RequestBody NewsLikeDisLikeDto newsLikeDisLikeDto, Principal principal){
+        boolean newsLikeStatus = newsService.likeUnlikeNews(principal, newsLikeDisLikeDto);
+        if (newsLikeStatus){
+            return ApiResTemplate.successResponse(SuccessCode.LIKE_SUCCESS, newsLikeStatus);
+        }
+        return ApiResTemplate.successResponse(SuccessCode.UNLIKE_SUCCESS, newsLikeStatus);
     }
-
 
 
     //지역별 멤버가 등록한 지역에서 검색

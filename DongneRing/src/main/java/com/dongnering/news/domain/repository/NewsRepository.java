@@ -43,4 +43,6 @@ public interface NewsRepository extends JpaRepository<News, Long> {
 
 
     boolean existsByNewsIdentifyId(Long newsIdentifyId);
+
+    Optional<News> findByNewsIdentifyId(Long newsIdentifyId);
 }

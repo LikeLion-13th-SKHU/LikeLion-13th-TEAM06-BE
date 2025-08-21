@@ -12,3 +12,12 @@ services:
     volumes:
       - /home/${EC2_USER}/app/config/application-prod.yml:/config/application-prod.yml
     restart: always
+    depends_on:
+      - ai-service
+
+  ai-service:
+    image: ${DOCKERHUB_AI_USERNAME}/${DOCKER_AI_IMAGE}
+    container_name: ${DOCKER_AI_CONTAINER}
+    restart: always
+    ports:
+      - "127.0.0.1:8000:8000"

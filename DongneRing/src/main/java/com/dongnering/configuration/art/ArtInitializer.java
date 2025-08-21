@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.client.RestTemplate;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -21,6 +22,8 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class ArtInitializer {
     private String OPENAPI_ART_SECRET;
 
     @Bean
+    @Order(3)
     public CommandLineRunner initArt(){
 
 
@@ -51,6 +55,7 @@ public class ArtInitializer {
 
 
             //예술 조회 개수 -> 1000개로 갈듯
+//            String searchContentNumber = "1000";   -> 최종 코드에는 이걸로
             String searchContentNumber = "20";
 
             try {
@@ -79,8 +84,19 @@ public class ArtInitializer {
                     Long identifyId = Long.valueOf(identifyStr);
 
                     String title = xpath.evaluate("title", item).trim();
-                    String startDate = xpath.evaluate("startDate", item).trim();
-                    String endDate = xpath.evaluate("endDate", item).trim();
+
+                    String startDateBefore = xpath.evaluate("startDate", item).trim();
+
+
+                    String startDate = dateChange(startDateBefore);
+
+                    String endDateBefore = xpath.evaluate("endDate", item).trim();
+
+                    String endDate = dateChange(endDateBefore);
+
+
+
+
                     String location = xpath.evaluate("place", item).trim();
                     String area = xpath.evaluate("area", item).trim();
                     String imgUrl = xpath.evaluate("thumbnail", item).trim();
@@ -111,10 +127,22 @@ public class ArtInitializer {
                 System.err.println("art 초기 업데이트 오류 발생 : " + e.getMessage());
             }
 
-
+            System.out.println("초기 아트 데이터 세팅 완료");
         };
 
 
+    }
+
+    private String dateChange(String startDate) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        LocalDate date = LocalDate.parse(startDate, inputFormatter);
+        String formatted = date.format(outputFormatter);
+
+        System.out.println("test : " + formatted);
+
+        return formatted;
     }
 
 }

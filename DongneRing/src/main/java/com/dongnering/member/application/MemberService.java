@@ -91,7 +91,7 @@ public class MemberService {
 
         // 새로운 관심사 저장
         for (InterestType interestType : reqDto.interests()) {
-            Interest interest = interestRepository.findByInterestType(interestType);
+            Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;;
             if (interest == null) {
                 throw new IllegalStateException("해당하는 관심사가 없습니다.");
             }

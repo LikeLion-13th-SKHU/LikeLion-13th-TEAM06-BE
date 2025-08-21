@@ -46,7 +46,8 @@ public enum SuccessCode {
     NEWS_GET_SUCCESS(HttpStatus.CREATED, "뉴스 조회 성공."),
     ARTS_GET_SUCCESS(HttpStatus.CREATED, "아트 조회 성공."),
     NEWS_LIKE_SUCCESS(HttpStatus.CREATED, "뉴스 좋아요 성공."),
-    NEWS_DELETE_SUCCESS(HttpStatus.CREATED, "뉴스 삭제 성공.");
+    NEWS_DELETE_SUCCESS(HttpStatus.CREATED, "뉴스 삭제 성공."),
+    ART_DELETE_SUCCESS(HttpStatus.CREATED, "아트 삭제 성공.");
 
 
 
