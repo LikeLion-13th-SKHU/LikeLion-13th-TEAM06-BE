@@ -15,7 +15,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -54,9 +53,10 @@ public class ArtInitializer {
 
 
 
-            //예술 조회 개수 -> 1000개로 갈듯
-//            String searchContentNumber = "1000";   -> 최종 코드에는 이걸로
+//            //예술 조회 개수 -> 1000개로 갈듯
+//            String searchContentNumber = "1000";
             String searchContentNumber = "20";
+
 
             try {
 
@@ -79,7 +79,6 @@ public class ArtInitializer {
                 for (int i = newsItems.getLength() - 1; i >= 0; i--){
                     Node item = newsItems.item(i);
 
-                    //식별값 Long전환
                     String identifyStr = xpath.evaluate("seq", item).trim();
                     Long identifyId = Long.valueOf(identifyStr);
 

@@ -13,7 +13,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -22,8 +21,6 @@ import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-//매일 9:00 최신 예술 100개 조회 -> 이전에 등록된 정보는 저장 x
 
 @Component
 @RequiredArgsConstructor
@@ -36,6 +33,8 @@ public class EveryDayArtUpdate {
 
     @Scheduled(cron = "0 0 7-19/3 * * *") //오전 7 - 오후7시까지 3시간마다
     public void runScheduledJob() {
+
+        System.out.println("아트 스케줄러 실행 시작");
 
         //xml utf-8인코딩 설정
         RestTemplate restTemplate = new RestTemplate();
@@ -69,7 +68,7 @@ public class EveryDayArtUpdate {
             for (int i = newsItems.getLength() - 1; i >= 0; i--){
                 Node item = newsItems.item(i);
 
-                //식별값 Long전환
+
                 String identifyStr = xpath.evaluate("seq", item).trim();
                 Long identifyId = Long.valueOf(identifyStr);
 
@@ -114,9 +113,10 @@ public class EveryDayArtUpdate {
 
 
             } } catch (Exception e) {
-            System.err.println("art 초기 업데이트 오류 발생 : " + e.getMessage());
+            System.err.println("아트 데일리 스케줄 업데이트 오류 발생 : " + e.getMessage());
         }
 
+        System.out.println("아트 스케줄러 실행 완료!");
 
 
     }
