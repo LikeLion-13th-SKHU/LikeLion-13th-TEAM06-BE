@@ -163,6 +163,7 @@ public class NewsInitializerWithAiServer {
                 for (JsonNode item : root) {
                     //뉴스 식별 아이디
                     String id = item.get("NewsItemId").asText();
+
                     Long newsIdentifyId = Long.valueOf(id);
 
                     //뉴스 관심사 태그
@@ -247,7 +248,7 @@ public class NewsInitializerWithAiServer {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("뉴스 추가 내용 없음");
         }
     }
 
