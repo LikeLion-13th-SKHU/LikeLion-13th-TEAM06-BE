@@ -66,10 +66,9 @@ public class NewsInitializerWithAiServer {
                     .add(1, new org.springframework.http.converter.StringHttpMessageConverter(java.nio.charset.StandardCharsets.UTF_8));
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
 //            LocalDate startDate = LocalDate.now().minusMonths(3); // 세 달 전 --> 최종 코드는 이걸로
             LocalDate startDate = LocalDate.now().minusWeeks(1);
-
-
             LocalDate endDate = LocalDate.now();            // 오늘
 
             List<NewsOpenApiToServerDto> sixDayList = new ArrayList<>();
@@ -149,9 +148,6 @@ public class NewsInitializerWithAiServer {
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
 
-            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list);
-//            System.out.println("POST로 보낼 JSON (6일 단위):");
-//            System.out.println(jsonString);
 
             // 실제 POST 전송 시
             HttpHeaders headers = new HttpHeaders();
@@ -167,6 +163,7 @@ public class NewsInitializerWithAiServer {
                 for (JsonNode item : root) {
                     //뉴스 식별 아이디
                     String id = item.get("NewsItemId").asText();
+
                     Long newsIdentifyId = Long.valueOf(id);
 
                     //뉴스 관심사 태그
@@ -251,7 +248,7 @@ public class NewsInitializerWithAiServer {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("뉴스 추가 내용 없음");
         }
     }
 
