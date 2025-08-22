@@ -28,7 +28,9 @@ public record NewsSingleByIdDto(
 
         List<NewsCommentResponseDto> newsComment,
 
-        List<String> summary
+        List<String> summary,
+
+        List<String> tags
 
 
 ) {
@@ -37,6 +39,7 @@ public record NewsSingleByIdDto(
         return NewsSingleByIdDto.builder()
                 .newsId(news.getNewsId())
                 .title(news.getTitle())
+                .tags(news.getNewsTags())
                 .summary(news.getNewsSummary())
                 .content(news.getContent())
                 .interestTypes(interestTypes)
