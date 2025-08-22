@@ -71,7 +71,7 @@ public class Member {
     private List<NewsComment> newsCommentList = new ArrayList<>();
 
     @Builder
-    private Member(String nickname, String email, String memberPictureUrl , Role role, Provider provider, String refreshToken){
+    private Member(String nickname, String email, String memberPictureUrl, Role role, Provider provider, String refreshToken) {
         this.nickname = nickname;
         this.email = email;
         this.role = role;
@@ -93,10 +93,11 @@ public class Member {
     }
 
     //프로필 수정용 메서드
-    public void updateProfile(String nickname, Long age, String location) {
+    public void updateProfile(String nickname, Long age, String location, String email) {
         if (nickname != null) this.nickname = nickname;
         if (age != null) this.age = age;
         if (location != null) this.location = location;
+        if (email != null) this.email = email;
     }
 
     // 개인화 저장용 메서드

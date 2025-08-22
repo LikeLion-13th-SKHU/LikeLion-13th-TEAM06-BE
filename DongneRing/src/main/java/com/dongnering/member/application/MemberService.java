@@ -5,8 +5,8 @@ import com.dongnering.common.exception.BusinessException;
 import com.dongnering.interest.domain.Interest;
 import com.dongnering.interest.domain.InterestType;
 import com.dongnering.interest.domain.repository.InterestRepository;
-import com.dongnering.member.api.dto.request.MemberSaveReqDto;
-import com.dongnering.member.api.dto.request.MemberUpdateReqDto;
+import com.dongnering.member.api.dto.request.MemberProfileUpdateReqDto;
+import com.dongnering.member.api.dto.request.MemberInterestUpdateReqDto;
 import com.dongnering.member.api.dto.response.MemberInfoResDto;
 import com.dongnering.member.domain.Member;
 import com.dongnering.member.domain.repository.MemberRepository;
@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.security.Principal;
 import java.util.List;
 import java.util.stream.Collectors;
-//커밋용
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -28,9 +28,9 @@ public class MemberService {
     private final InterestRepository interestRepository;
     private final MemberInterestRepository memberInterestRepository;
 
-    //공통적으로 Member 조회 메서드
+    // Principal에서 Member 조회
     private Member getMemberByPrincipal(Principal principal) {
-        Long memberId = Long.parseLong(principal.getName()); // 토큰에서 memberId 추출
+        Long memberId = Long.parseLong(principal.getName());
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.MEMBER_NOT_FOUND,
@@ -38,8 +38,7 @@ public class MemberService {
                 ));
     }
 
-
-    //프로필 조회
+    // 마이페이지 조회
     @Transactional(readOnly = true)
     public MemberInfoResDto getProfile(Principal principal) {
         Member member = getMemberByPrincipal(principal);
@@ -59,41 +58,44 @@ public class MemberService {
         );
     }
 
-    //최초 개인화 저장
+    // 프로필 편집 (닉네임, 이메일)
     @Transactional
-    public void saveProfile(Principal principal, MemberSaveReqDto reqDto) {
+    public void updateProfileInfo(Principal principal, MemberProfileUpdateReqDto reqDto) {
         Member member = getMemberByPrincipal(principal);
-
-        member.saveProfile(reqDto.age(), reqDto.location());
-
-        //관심사 저장
-        for (InterestType interestType : reqDto.interests()) {
-            Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;
-            MemberInterest memberInterest = MemberInterest.builder()
-                    .member(member)
-                    .interest(interest)
-                    .build();
-            memberInterestRepository.save(memberInterest);
-        }
-
-        //최초 개인화 완료 처리
-        member.completeProfile();
+        // 닉네임과 이메일만 변경
+        member.updateProfile(
+                reqDto.nickname(),
+                member.getAge(),
+                member.getLocation(),
+                reqDto.email()
+        );
     }
 
-    //프로필 수정
+    // 관심사/지역 설정
     @Transactional
-    public void updateProfile(Principal principal, MemberUpdateReqDto reqDto) {
+    public void updateProfileInterest(Principal principal, MemberInterestUpdateReqDto reqDto) {
         Member member = getMemberByPrincipal(principal);
 
-        member.updateProfile(reqDto.nickname(), reqDto.age(), reqDto.location());
+        // location만 변경
+        member.updateProfile(
+                member.getNickname(),
+                member.getAge(),
+                reqDto.location(),
+                member.getEmail()
+        );
 
-        //기존 관심사 제거
-        memberInterestRepository.deleteAll(member.getMemberInterests());
+        // 기존 관심사 제거
+        List<MemberInterest> existingInterests = memberInterestRepository.findByMember(member);
+        memberInterestRepository.deleteAll(existingInterests);
         member.getMemberInterests().clear();
 
-        //새로운 관심사 저장
+        // 새로운 관심사 저장
         for (InterestType interestType : reqDto.interests()) {
             Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;;
+            if (interest == null) {
+                throw new IllegalStateException("해당하는 관심사가 없습니다.");
+            }
+
             MemberInterest memberInterest = MemberInterest.builder()
                     .member(member)
                     .interest(interest)
