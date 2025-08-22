@@ -50,12 +50,14 @@ public class MemberService {
 
         return MemberInfoResDto.of(
                 member.getNickname(),
+                member.getEmail(),
                 member.getAge(),
                 member.getLocation(),
                 member.getMemberPictureUrl(),
                 interests,
                 member.getProfileCompleted()
         );
+
     }
 
     // 프로필 편집 (닉네임, 이메일)
