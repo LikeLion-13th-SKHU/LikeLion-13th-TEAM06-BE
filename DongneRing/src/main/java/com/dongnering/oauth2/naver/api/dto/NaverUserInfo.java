@@ -1,21 +1,21 @@
 package com.dongnering.oauth2.naver.api.dto;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Data;
 
-@Data
-public class NaverUserInfo {
+public record NaverUserInfo(Response response) {
 
-    private Response response;
+    public record Response(
+            String email,
 
-    @Data
-    public static class Response {
-        private String email;
-        private String nickname;
+            String nickname,
+            @SerializedName("profile_image")
+            String profileImage,
 
-        @SerializedName("profile_image")
-        private String profileImage;
+            String name,
 
-        private String name;
-    }
+            String birthday,
+
+            String birthyear
+
+    ) {}
 }

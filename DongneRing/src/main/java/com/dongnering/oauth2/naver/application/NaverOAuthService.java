@@ -16,6 +16,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -63,9 +66,9 @@ public class NaverOAuthService {
         log.info("네이버 토큰 응답 바디: {}", response.getBody());
 
         if (response.getStatusCode() == HttpStatus.OK) {
-            // 네이버 토큰 응답 JSON 구조에 맞는 DTO 필요 (간단히 Gson으로 파싱 가능)
+            // 레코드 DTO 사용
             NaverTokenResponse tokenResponse = new Gson().fromJson(response.getBody(), NaverTokenResponse.class);
-            return tokenResponse.getAccessToken();
+            return tokenResponse.accessToken();
         }
         throw new RuntimeException("네이버 엑세스 토큰을 가져오는데 실패했습니다.");
     }
@@ -94,15 +97,27 @@ public class NaverOAuthService {
         NaverUserInfo userInfo = getUserInfo(accessToken);
 
         // 네이버는 이메일 인증 필드가 없거나 따로 체크 필요할 수 있음
-        if (userInfo.getResponse() == null || userInfo.getResponse().getEmail() == null) {
+        if (userInfo.response() == null || userInfo.response().email() == null) {
             throw new RuntimeException("이메일 정보가 없는 유저입니다.");
         }
 
-        Member member = memberRepository.findByEmail(userInfo.getResponse().getEmail())
+        // 문자열 생년월일 → LocalDate 변환
+        String birthdayStr = userInfo.response().birthday();   // MM-dd
+        String birthyearStr = userInfo.response().birthyear(); // yyyy
+
+        final LocalDate birthdayFinal;
+        if (birthdayStr != null && birthyearStr != null) {
+            birthdayFinal = LocalDate.parse(birthyearStr + "-" + birthdayStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        } else {
+            birthdayFinal = null;
+        }
+
+        Member member = memberRepository.findByEmail(userInfo.response().email())
                 .orElseGet(() -> memberRepository.save(Member.builder()
-                        .email(userInfo.getResponse().getEmail())
-                        .nickname(userInfo.getResponse().getName())
-                        .memberPictureUrl(userInfo.getResponse().getProfileImage())
+                        .email(userInfo.response().email())
+                        .nickname(userInfo.response().nickname())           // 닉네임 적용
+                        .memberPictureUrl(userInfo.response().profileImage())
+                        .birthday(birthdayFinal)                             // final 변수 사용
                         .role(Role.ROLE_USER)
                         .provider(Member.Provider.NAVER)
                         .build()));

@@ -99,7 +99,7 @@ public class GoogleOAuthService {
         throw new RuntimeException("구글 사용자 정보를 가져오는데 실패했습니다.");
     }
 
-    // People API 호출 후 DTO로 사용자 프로필 가져오기
+    /// People API 호출 후 DTO로 사용자 프로필 가져오기
     private PeopleInfo getUserProfileFromPeopleApi(String accessToken) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -112,10 +112,25 @@ public class GoogleOAuthService {
         log.info("People API 응답 바디: {}", response.getBody());
 
         if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
-            return new Gson().fromJson(response.getBody(), PeopleInfo.class);
+            PeopleInfo peopleInfo = new Gson().fromJson(response.getBody(), PeopleInfo.class);
+
+
+            log.info("PeopleInfo.names: {}", peopleInfo.names());
+            log.info("PeopleInfo.birthdays: {}", peopleInfo.birthdays());
+
+            if (peopleInfo.birthdays() != null && !peopleInfo.birthdays().isEmpty()) {
+                PeopleBirthday birthday = peopleInfo.birthdays().get(0);
+                log.info("생년월일 DTO: {}", birthday);
+                if (birthday.date() != null) {
+                    log.info("year: {}, month: {}, day: {}", birthday.date().year(), birthday.date().month(), birthday.date().day());
+                }
+            }
+
+            return peopleInfo;
         }
         throw new RuntimeException("구글 People API에서 사용자 정보를 가져오는데 실패했습니다.");
     }
+
 
     // 닉네임 추출
     private String extractDisplayName(PeopleInfo peopleInfo, String fallback) {
