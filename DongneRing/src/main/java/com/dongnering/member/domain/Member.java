@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ public class Member {
     private String nickname;
 
     private Long age;
+
+    private LocalDate birthday;
 
     private String memberPictureUrl;
 
@@ -71,13 +74,18 @@ public class Member {
     private List<NewsComment> newsCommentList = new ArrayList<>();
 
     @Builder
-    private Member(String nickname, String email, String memberPictureUrl, Role role, Provider provider, String refreshToken) {
+    private Member(String nickname, String email, String memberPictureUrl, Role role, Provider provider, String refreshToken, LocalDate birthday) {
         this.nickname = nickname;
         this.email = email;
         this.role = role;
         this.provider = provider;
         this.memberPictureUrl = memberPictureUrl;
         this.refreshToken = refreshToken;
+        this.birthday = birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
     }
 
     public void saveRefreshToken(String refreshToken) {
