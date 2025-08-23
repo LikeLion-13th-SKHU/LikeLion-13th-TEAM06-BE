@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class Member {
 
     @Column(nullable = false)
     private String nickname;
+
+    private LocalDate birthday;
 
     private Long age;
 
@@ -71,13 +74,14 @@ public class Member {
     private List<NewsComment> newsCommentList = new ArrayList<>();
 
     @Builder
-    private Member(String nickname, String email, String memberPictureUrl, Role role, Provider provider, String refreshToken) {
+    private Member(String nickname, String email, String memberPictureUrl, Role role, Provider provider, String refreshToken, LocalDate birthday) {
         this.nickname = nickname;
         this.email = email;
         this.role = role;
         this.provider = provider;
         this.memberPictureUrl = memberPictureUrl;
         this.refreshToken = refreshToken;
+        this.birthday = birthday;
     }
 
     public void saveRefreshToken(String refreshToken) {
@@ -91,6 +95,11 @@ public class Member {
     public void setAge(Long age) {
         this.age = age;
     }
+
+    public void setBirthday(LocalDate birthday) {
+        this.birthday = birthday;
+    }
+
 
     //프로필 수정용 메서드
     public void updateProfile(String nickname, Long age, String location, String email) {
