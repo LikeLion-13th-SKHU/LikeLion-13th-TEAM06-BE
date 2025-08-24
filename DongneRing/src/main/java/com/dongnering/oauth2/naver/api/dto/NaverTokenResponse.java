@@ -1,19 +1,17 @@
 package com.dongnering.oauth2.naver.api.dto;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Data;
 
-@Data
-public class NaverTokenResponse {
-    @SerializedName("access_token")
-    private String accessToken;
+public record NaverTokenResponse(
+        @SerializedName("access_token")
+        String accessToken,
 
-    @SerializedName("refresh_token")
-    private String refreshToken;
+        @SerializedName("refresh_token")
+        String refreshToken,
 
-    @SerializedName("token_type")
-    private String tokenType;
+        @SerializedName("token_type")
+        String tokenType,
 
-    @SerializedName("expires_in")
-    private String expiresIn;
-}
+        @SerializedName("expires_in")
+        String expiresIn
+) {}
