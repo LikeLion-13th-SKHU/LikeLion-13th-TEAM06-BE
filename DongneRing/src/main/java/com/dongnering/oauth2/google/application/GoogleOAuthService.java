@@ -1,3 +1,5 @@
+
+
 package com.dongnering.oauth2.google.application;
 
 import com.google.gson.Gson;
@@ -194,3 +196,4 @@ public class GoogleOAuthService {
         return loginOrSignUp(accessToken);
     }
 }
+

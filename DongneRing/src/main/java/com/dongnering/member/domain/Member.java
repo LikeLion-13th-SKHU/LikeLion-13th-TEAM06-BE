@@ -37,6 +37,8 @@ public class Member {
 
     private Long age;
 
+    private LocalDate birthday;
+
     private String memberPictureUrl;
 
     private String location;
@@ -81,6 +83,10 @@ public class Member {
         this.provider = provider;
         this.memberPictureUrl = memberPictureUrl;
         this.refreshToken = refreshToken;
+        this.birthday = birthday;
+    }
+
+    public void setBirthday(LocalDate birthday) {
         this.birthday = birthday;
     }
 

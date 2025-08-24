@@ -55,7 +55,6 @@ google:
   user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
   people-uri: https://people.googleapis.com/v1/people/me?personFields=names,birthdays
 
-
 naver:
   client-id: ${NAVER_CLIENT_ID}
   client-secret: ${NAVER_CLIENT_SECRET}
