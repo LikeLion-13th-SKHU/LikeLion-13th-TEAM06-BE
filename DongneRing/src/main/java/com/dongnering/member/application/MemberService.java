@@ -55,7 +55,8 @@ public class MemberService {
                 member.getLocation(),
                 member.getMemberPictureUrl(),
                 interests,
-                member.getProfileCompleted()
+                member.getProfileCompleted(),
+                member.getBirthday()
         );
 
     }
