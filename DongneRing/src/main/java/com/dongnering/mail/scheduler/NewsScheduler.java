@@ -29,8 +29,8 @@ public class NewsScheduler {
 
     private final Random random = new Random();
 
-    // 매일 ?시에 메일 전송 실행 - 가입한 모든 사용자
-    // @Scheduled(cron = "0 35 2 * * *")
+    // 매일 오전 7시에 메일 전송 실행 - 가입한 모든 사용자
+    @Scheduled(cron = "0 0 7 * * *", zone = "Asia/Seoul")
     public void sendDailyNews() {
         memberRepository.findAll().forEach(member -> {
             try {
