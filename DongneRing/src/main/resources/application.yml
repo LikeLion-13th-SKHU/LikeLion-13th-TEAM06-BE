@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -53,7 +53,7 @@ google:
   redirect-uri: ${GOOGLE_REDIRECT_URI}
   token-uri: https://oauth2.googleapis.com/token
   user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
-  people-uri: https://people.googleapis.com/v1/people/me?personFields=birthdays,names
+  people-uri: https://people.googleapis.com/v1/people/me?personFields=names,birthdays
 
 naver:
   client-id: ${NAVER_CLIENT_ID}

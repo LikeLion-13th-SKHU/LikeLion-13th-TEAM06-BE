@@ -23,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -31,9 +30,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.StringReader;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +47,7 @@ public class EveryDayNewsUpdate {
 
     @Scheduled(cron = "0 0 7-19/3 * * *") //오전 7 - 오후7시까지 3시간마다
     public void runScheduledJob() {
-        System.out.println("3시 뉴스 실행");
+        System.out.println("뉴스 스케줄러 실행 시작");
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getMessageConverters()
@@ -61,10 +58,9 @@ public class EveryDayNewsUpdate {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
         String today = LocalDate.now().format(formatter);
 
-        // 1. 오늘 뉴스 가져오기
+        //오늘 뉴스 가져오기
         List<NewsOpenApiToServerDto> newsList = fetchNewsFromApi(today, today, restTemplate);
 
-        // 2. DB 저장
         newsList.forEach(news -> {
             if (!newsRepository.existsByNewsIdentifyId(Long.valueOf(news.newsIdentifyId()))) {
                 newsService.newFirstSave(
@@ -77,9 +73,8 @@ public class EveryDayNewsUpdate {
             }
         });
 
-        // 3. 바로 POST
         postNewsList(newsList);
-        System.out.println("스케줄러 실행 완료!");
+        System.out.println("뉴스 스케줄러 실행 완료!");
     }
 
     private List<NewsOpenApiToServerDto> fetchNewsFromApi(String start, String end, RestTemplate restTemplate) {
@@ -120,10 +115,6 @@ public class EveryDayNewsUpdate {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ObjectMapper objectMapper = new ObjectMapper();
-
-            String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(list);
-            System.out.println("POST로 보낼 JSON (6일 단위):");
-            System.out.println(jsonString);
 
             // 실제 POST 전송 시
             HttpHeaders headers = new HttpHeaders();
@@ -223,8 +214,10 @@ public class EveryDayNewsUpdate {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("뉴스 데일리 스케줄 업데이트 오류 발생 : " + e.getMessage());
         }
+
+        System.out.println("뉴스 데일리 스케줄러 실행 완료!");
     }
 
 
