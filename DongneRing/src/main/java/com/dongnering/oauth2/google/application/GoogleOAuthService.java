@@ -6,16 +6,20 @@ import com.dongnering.member.domain.Member;
 import com.dongnering.member.domain.repository.MemberRepository;
 import com.dongnering.oauth2.google.api.dto.GoogleTokenResponse;
 import com.dongnering.oauth2.google.api.dto.GoogleUserInfo;
+import com.dongnering.oauth2.google.api.dto.PeopleBirthday;
+import com.dongnering.oauth2.google.api.dto.PeopleDate;
+import com.dongnering.oauth2.google.api.dto.PeopleInfo;
 import com.dongnering.global.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
 
 @Slf4j
 @Service
@@ -37,11 +41,11 @@ public class GoogleOAuthService {
     @Value("${google.user-info-uri}")
     private String GOOGLE_USERINFO_URL;
 
+    @Value("${google.people-uri}")
+    private String GOOGLE_PEOPLE_API_URL;
+
     private final MemberRepository memberRepository;
     private final JwtTokenProvider jwtTokenProvider;
-
-//    private final String GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token";
-//    private final String GOOGLE_USERINFO_URL = "https://www.googleapis.com/oauth2/v2/userinfo";
 
     // 구글에서 access token 발급 받기
     public String getGoogleAccessToken(String code) {
@@ -95,6 +99,62 @@ public class GoogleOAuthService {
         throw new RuntimeException("구글 사용자 정보를 가져오는데 실패했습니다.");
     }
 
+    /// People API 호출 후 DTO로 사용자 프로필 가져오기
+    private PeopleInfo getUserProfileFromPeopleApi(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(GOOGLE_PEOPLE_API_URL, HttpMethod.GET, entity, String.class);
+
+        log.info("People API 응답 상태: {}", response.getStatusCode());
+        log.info("People API 응답 바디: {}", response.getBody());
+
+        if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
+            PeopleInfo peopleInfo = new Gson().fromJson(response.getBody(), PeopleInfo.class);
+
+
+            log.info("PeopleInfo.names: {}", peopleInfo.names());
+            log.info("PeopleInfo.birthdays: {}", peopleInfo.birthdays());
+
+            if (peopleInfo.birthdays() != null && !peopleInfo.birthdays().isEmpty()) {
+                PeopleBirthday birthday = peopleInfo.birthdays().get(0);
+                log.info("생년월일 DTO: {}", birthday);
+                if (birthday.date() != null) {
+                    log.info("year: {}, month: {}, day: {}", birthday.date().year(), birthday.date().month(), birthday.date().day());
+                }
+            }
+
+            return peopleInfo;
+        }
+        throw new RuntimeException("구글 People API에서 사용자 정보를 가져오는데 실패했습니다.");
+    }
+
+
+    // 닉네임 추출
+    private String extractDisplayName(PeopleInfo peopleInfo, String fallback) {
+        if (peopleInfo.names() != null && !peopleInfo.names().isEmpty()) {
+            String name = peopleInfo.names().get(0).displayName();
+            if (name != null && !name.isEmpty()) return name;
+        }
+        return fallback;
+    }
+
+    // 생년월일 추출
+    private LocalDate extractBirthday(PeopleInfo peopleInfo) {
+        if (peopleInfo.birthdays() == null || peopleInfo.birthdays().isEmpty()) return null;
+
+        PeopleBirthday candidate = peopleInfo.birthdays().get(0);
+        PeopleDate date = candidate.date();
+        if (date == null || date.year() == null) return null;
+
+        int year = date.year();
+        int month = (date.month() != null) ? date.month() : 1;
+        int day = (date.day() != null) ? date.day() : 1;
+
+        return LocalDate.of(year, month, day);
+    }
 
     // 로그인 또는 회원가입 후 JWT 토큰 생성 및 반환
     public Member loginOrSignUp(String googleAccessToken) {
@@ -104,14 +164,24 @@ public class GoogleOAuthService {
             throw new RuntimeException("이메일 인증이 되지 않은 유저입니다.");
         }
 
+        PeopleInfo peopleInfo = getUserProfileFromPeopleApi(googleAccessToken);
+
+        String nickname = extractDisplayName(peopleInfo, userInfo.getName());
+        LocalDate birthDate = extractBirthday(peopleInfo);
+        Long age = (birthDate != null) ? (long)(LocalDate.now().getYear() - birthDate.getYear() + 1) : null;
+
         Member member = memberRepository.findByEmail(userInfo.getEmail())
                 .orElseGet(() -> memberRepository.save(Member.builder()
                         .email(userInfo.getEmail())
-                        .nickname(userInfo.getName())
+                        .nickname(nickname)
                         .memberPictureUrl(userInfo.getPictureUrl())
                         .role(Role.ROLE_USER)
-                        .provider(Member.Provider.GOOGLE)  // 구글 소셜 로그인 표시
+                        .provider(Member.Provider.GOOGLE)
+                        .birthday(birthDate)
                         .build()));
+
+        if (birthDate != null) member.setBirthday(birthDate);
+        if (age != null) member.setAge(age);
 
         return member;
     }
@@ -123,5 +193,4 @@ public class GoogleOAuthService {
         // access token으로 로그인 또는 회원가입 후 JWT 발급
         return loginOrSignUp(accessToken);
     }
-
 }
