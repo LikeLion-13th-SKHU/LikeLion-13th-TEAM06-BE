@@ -37,8 +37,6 @@ public class Member {
 
     private Long age;
 
-    private LocalDate birthday;
-
     private String memberPictureUrl;
 
     private String location;
@@ -101,11 +99,6 @@ public class Member {
     public void setAge(Long age) {
         this.age = age;
     }
-
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
-    }
-
 
     //프로필 수정용 메서드
     public void updateProfile(String nickname, Long age, String location, String email) {

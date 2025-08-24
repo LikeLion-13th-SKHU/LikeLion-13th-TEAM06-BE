@@ -105,5 +105,8 @@ public class MemberService {
                     .build();
             memberInterestRepository.save(memberInterest);
         }
+
+        // 개인화 상태 업데이트
+        member.completeProfile();
     }
 }
