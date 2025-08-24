@@ -67,8 +67,7 @@ public class NewsInitializerWithAiServer {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-//            LocalDate startDate = LocalDate.now().minusMonths(3); // 세 달 전 --> 최종 코드는 이걸로
-            LocalDate startDate = LocalDate.now().minusWeeks(1);
+            LocalDate startDate = LocalDate.now().minusMonths(3); // 세 달 전 --> 최종 코드는 이걸로
             LocalDate endDate = LocalDate.now();            // 오늘
 
             List<NewsOpenApiToServerDto> sixDayList = new ArrayList<>();

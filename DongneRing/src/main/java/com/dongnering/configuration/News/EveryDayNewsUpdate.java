@@ -214,7 +214,7 @@ public class EveryDayNewsUpdate {
 
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("뉴스 데일리 스케줄 업데이트 오류 발생 : " + e.getMessage());
         }
 
         System.out.println("뉴스 데일리 스케줄러 실행 완료!");
