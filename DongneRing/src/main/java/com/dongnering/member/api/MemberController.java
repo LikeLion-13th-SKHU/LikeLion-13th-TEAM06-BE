@@ -2,6 +2,7 @@ package com.dongnering.member.api;
 
 import com.dongnering.common.error.SuccessCode;
 import com.dongnering.common.template.ApiResTemplate;
+import com.dongnering.member.api.dto.request.MemberOnBordingUpdateReqDto;
 import com.dongnering.member.api.dto.request.MemberProfileUpdateReqDto;
 import com.dongnering.member.api.dto.request.MemberInterestUpdateReqDto;
 import com.dongnering.member.api.dto.response.MemberInfoResDto;
@@ -50,4 +51,19 @@ public class MemberController {
         memberService.updateProfileInterest(principal, reqDto);
         return ApiResTemplate.successResponse(SuccessCode.UPDATE_SUCCESS, null);
     }
+
+
+
+    //온보딩용 입력 api
+    @PutMapping("/onbording")
+    @Operation(summary = "온보딩 설정 ", description = "온보딩 설정")
+    public ApiResTemplate<Void> onBording(
+            Principal principal,
+            @RequestBody MemberOnBordingUpdateReqDto reqDto
+    ) {
+        memberService.onBording(principal, reqDto );
+        return ApiResTemplate.successResponse(SuccessCode.UPDATE_SUCCESS, null);
+    }
+
+
 }

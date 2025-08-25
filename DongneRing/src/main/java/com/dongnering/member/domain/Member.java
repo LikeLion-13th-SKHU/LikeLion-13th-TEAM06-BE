@@ -108,6 +108,16 @@ public class Member {
         if (email != null) this.email = email;
     }
 
+    //프로필 온보딩용 메서드
+    public void updateProfile(String location) {
+        if (location != null) this.location = location;
+    }
+
+
+
+
+
+
     // 개인화 저장용 메서드
     public void saveProfile(Long age, String location) {
         if (age != null) this.age = age;

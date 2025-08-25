@@ -5,6 +5,7 @@ import com.dongnering.common.exception.BusinessException;
 import com.dongnering.interest.domain.Interest;
 import com.dongnering.interest.domain.InterestType;
 import com.dongnering.interest.domain.repository.InterestRepository;
+import com.dongnering.member.api.dto.request.MemberOnBordingUpdateReqDto;
 import com.dongnering.member.api.dto.request.MemberProfileUpdateReqDto;
 import com.dongnering.member.api.dto.request.MemberInterestUpdateReqDto;
 import com.dongnering.member.api.dto.response.MemberInfoResDto;
@@ -94,6 +95,42 @@ public class MemberService {
 
         // 새로운 관심사 저장
         for (InterestType interestType : reqDto.interests()) {
+            Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;;
+            if (interest == null) {
+                throw new IllegalStateException("해당하는 관심사가 없습니다.");
+            }
+
+            MemberInterest memberInterest = MemberInterest.builder()
+                    .member(member)
+                    .interest(interest)
+                    .build();
+            memberInterestRepository.save(memberInterest);
+        }
+
+        // 개인화 상태 업데이트
+        member.completeProfile();
+    }
+
+
+
+
+
+    // 온보딩 설정
+    @Transactional
+    public void onBording(Principal principal, MemberOnBordingUpdateReqDto memberOnBordingUpdateReqDto) {
+        Member member = getMemberByPrincipal(principal);
+
+        // location만 변경
+        member.updateProfile(
+                memberOnBordingUpdateReqDto.location());
+
+        // 기존 관심사 제거
+        List<MemberInterest> existingInterests = memberInterestRepository.findByMember(member);
+        memberInterestRepository.deleteAll(existingInterests);
+        member.getMemberInterests().clear();
+
+        // 새로운 관심사 저장
+        for (InterestType interestType : memberOnBordingUpdateReqDto.interests()) {
             Interest interest = interestRepository.findByInterestType(interestType).orElseThrow(() -> new IllegalStateException("해당하는 관심사가 없습니다."));;;
             if (interest == null) {
                 throw new IllegalStateException("해당하는 관심사가 없습니다.");
